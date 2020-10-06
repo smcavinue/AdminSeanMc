@@ -1,3 +1,7 @@
+##Author: Sean McAvinue
+##Details: Used as a Graph/PowerShell example, 
+##          NOT FOR PRODUCTION USE! USE AT YOUR OWN RISK
+##          Returns a report of OneDrive file and folder structure to CSV file
 function GetGraphToken {
     <#
     .SYNOPSIS
