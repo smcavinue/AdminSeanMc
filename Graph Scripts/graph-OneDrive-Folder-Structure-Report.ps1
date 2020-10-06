@@ -157,6 +157,7 @@ function RunQueryandEnumerateResults {
     if ($results."@odata.nextLink" -ne $null) {
         write-host enumerating pages -ForegroundColor yellow
         $NextPageUri = $results."@odata.nextLink"
+        ##While there is a next page, query it and loop, append results
         While ($NextPageUri -ne $null) {
             $NextPageRequest = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token)" } -Uri $NextPageURI -Method Get)
             $NxtPageData = $NextPageRequest.Value
