@@ -49,4 +49,3 @@ $Refreshedtoken = (Invoke-RestMethod -Uri $apiUri -Method Post -ContentType 'app
 return $Refreshedtoken
 
 }
-$NewToken = RefreshAccessToken -Token $usertoken.refresh_token -tenantID "M365x142973.onmicrosoft.com" -ClientID "0d36ebe3-f215-4014-9748-5be95ac1a960" -Secret "cT2OEw0r-_BPo9CzpcXEEa2Ke-8Xn9h_WK"
