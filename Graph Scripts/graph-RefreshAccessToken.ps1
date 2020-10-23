@@ -7,7 +7,7 @@ function RefreshAccessToken{
     Returns a refreshed access token
     
     .PARAMETER Token
-    -Token is the existing token
+    -Token is the existing refresh token
 
     .PARAMETER tenantID
     -This is the tenant ID eg. domain.onmicrosoft.com
