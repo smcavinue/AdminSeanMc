@@ -1,7 +1,7 @@
 ##Author: Sean McAvinue
 ##Details: Used as a Graph/PowerShell example, 
 ##          NOT FOR PRODUCTION USE! USE AT YOUR OWN RISK
-##          Exports Planner instances to JSON files
+##          Exports Planner instances to CSV files
 function GetDelegatedGraphToken {
 
     <#
@@ -148,6 +148,7 @@ function SetGroupOwnership {
         ##Invoke Group Request
         $Group = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.AccessToken)" } -ContentType 'application/json' -Body $RequestBody -Uri $apiUri -Method Post)
     }
+    start-sleep 60
     foreach ($Group in $Grouplist) {
 
         $RequestBody = @"
