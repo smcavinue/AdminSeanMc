@@ -120,7 +120,7 @@ Function AddSBC {
     start-sleep 100
 
     ##Add Voice Routing Policy##
-    if (Get-CsOnlineVoiceRoutingPolicy -Identity $VoiceRoutingPolicyName) {
+    if (Get-CsOnlineVoiceRoutingPolicy -Identity $VoiceRoutingPolicyName -ErrorAction silentlycontinue) {
         write-host "Voice Routing Policy $VoiceRoutingPolicyName  exists already, using existing" -ForegroundColor yellow
     }
     else {
@@ -133,7 +133,7 @@ Function AddSBC {
     start-sleep 100
 
     ##Create a new Voice Route
-    if (get-csonlinevoiceroute -Identity $VoiceRouteName) {
+    if (get-csonlinevoiceroute -Identity $VoiceRouteName -ErrorAction silentlycontinue) {
 
         write-host "Voice Route $VoiceRouteName already exists, updating existing"
         set-CsOnlineVoiceRoute -Identity $VoiceRouteName -OnlinePstnUsages @{add = "$PSTNUsageName" } -OnlinePstnGatewayList @{add = "$FQDN" } 
