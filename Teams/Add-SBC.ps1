@@ -90,17 +90,17 @@ Function AddSBC {
 
     if (!($CurrentPSTNUsage.usage -contains "SBC")) {
         
-        write-host "$PSTNUsageName does not exist, creating new" -ForegroundColor blue
+        write-host "$PSTNUsageName does not exist, creating new" -ForegroundColor yellow
         Set-CsOnlinePstnUsage -Identity global -Usage @{add = "$PSTNUsageName" }
 
     }
     else {
     
-        write-host "$PSTNUsageName exists, using existing" -ForegroundColor blue
+        write-host "$PSTNUsageName exists, using existing" -ForegroundColor yellow
 
     }
 
-    write-host "Pausing for PSTN Usage Replication" -ForegroundColor blue
+    write-host "Pausing for PSTN Usage Replication" -ForegroundColor yellow
     start-sleep 100
 
     ##Add SBC to Direct Routing Configuration##
@@ -116,20 +116,20 @@ Function AddSBC {
 
     }
 
-    write-host "Pausing for SBC Replication" -ForegroundColor blue
+    write-host "Pausing for SBC Replication" -ForegroundColor yellow
     start-sleep 100
 
     ##Add Voice Routing Policy##
     if (Get-CsOnlineVoiceRoutingPolicy -Identity $VoiceRoutingPolicyName) {
-        write-host "Voice Routing Policy $VoiceRoutingPolicyName  exists already, using existing" -ForegroundColor blue
+        write-host "Voice Routing Policy $VoiceRoutingPolicyName  exists already, using existing" -ForegroundColor yellow
     }
     else {
 
-        write-host "Creating Voice Routing Policy $VoiceRoutingPolicyName" -ForegroundColor blue
+        write-host "Creating Voice Routing Policy $VoiceRoutingPolicyName" -ForegroundColor yellow
         New-CsOnlineVoiceRoutingPolicy -Identity $VoiceRoutingPolicyName -OnlinePstnUsages $PSTNUsageName
 
     }
-    write-host "Pausing for Voice Routing Policy Replication" -ForegroundColor blue
+    write-host "Pausing for Voice Routing Policy Replication" -ForegroundColor yellow
     start-sleep 100
 
     ##Create a new Voice Route
