@@ -88,7 +88,7 @@ Function AddSBC {
     ##Adds PSTN Usage Record##
     $CurrentPSTNUsage = Get-CsOnlinePstnUsage
 
-    if (!($CurrentPSTNUsage.usage -eq "SBC")) {
+    if (!($CurrentPSTNUsage.usage -contains "SBC")) {
         
         write-host "$PSTNUsageName does not exist, creating new" -ForegroundColor blue
         Set-CsOnlinePstnUsage -Identity global -Usage @{add = "$PSTNUsageName" }
@@ -101,7 +101,7 @@ Function AddSBC {
     }
 
     write-host "Pausing for PSTN Usage Replication" -ForegroundColor blue
-    start-sleep 10
+    start-sleep 100
 
     ##Add SBC to Direct Routing Configuration##
     write-host "Creating SBC"
@@ -117,7 +117,7 @@ Function AddSBC {
     }
 
     write-host "Pausing for SBC Replication" -ForegroundColor blue
-    start-sleep 10
+    start-sleep 100
 
     ##Add Voice Routing Policy##
     if (Get-CsOnlineVoiceRoutingPolicy -Identity $VoiceRoutingPolicyName) {
@@ -130,7 +130,7 @@ Function AddSBC {
 
     }
     write-host "Pausing for Voice Routing Policy Replication" -ForegroundColor blue
-    start-sleep 10
+    start-sleep 100
 
     ##Create a new Voice Route
     if (get-csonlinevoiceroute -Identity $VoiceRouteName) {
