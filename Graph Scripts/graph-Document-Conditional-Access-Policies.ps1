@@ -95,8 +95,160 @@ function RunQueryandEnumerateResults {
 
     
 }
+function FindUser {
+    <#
+    .SYNOPSIS
+    Translates Users from ObjectID to UPN
+    
+    #>
+    # Access Token and user ObjectID
+    Param(
+        [parameter(Mandatory = $true)]
+        $Token,
+        [parameter(Mandatory = $true)]
+        $User
+    )
+    $apiUri = "https://graph.microsoft.com/v1.0/users/$User"
+    $UserObject = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token)" } -Uri $apiUri -Method Get)
 
-function Report-ConditionalAccess{
+
+    Return $UserObject.userprincipalname
+}
+
+function FindGroup {
+    <#
+    .SYNOPSIS
+    Translates Groups from ObjectID to Group Name
+    
+    #>
+    # Access Token and user ObjectID
+    Param(
+        [parameter(Mandatory = $true)]
+        $Token,
+        [parameter(Mandatory = $true)]
+        $Group
+    )
+    $apiUri = "https://graph.microsoft.com/v1.0/Groups/$Group"
+    $GroupObject = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token)" } -Uri $apiUri -Method Get)
+    Return $GroupObject.displayname
+
+}
+function PerformTranslation {
+    <#
+    .SYNOPSIS
+    Translates Users, Groups and Apps from Object IDs to Friendly Names
+    
+    #>
+    # Access Token and Current Policy
+    Param(
+        [parameter(Mandatory = $true)]
+        $Token,
+        [parameter(Mandatory = $true)]
+        $Policy
+    )
+    
+    ##Collect Existing Service Principals
+    $apiUri = "https://graph.microsoft.com/v1.0/serviceprincipals"
+    $ServicePrincipals = RunQueryandEnumerateResults -token $token -apiUri $apiUri
+
+    ##Process Included Applications
+    foreach ($includeapp in $policy.conditions.applications.includeapplications) {
+
+        if (($includeapp -ne "Office365") -and ($includeapp -ne "All")) {
+            $includeapplist += (($ServicePrincipals | ? { $_.appid -eq $includeapp }).appDisplayName + ",")
+        }
+        elseif ($includeapp -eq "Office365") {
+            $includeapplist += "Office365," 
+        }
+        elseif ($includeapp -eq "All") {
+            $includeapplist += "All," 
+        }
+
+    }
+
+    ##Process Excluded Applications
+    foreach ($excludeapp in $policy.conditions.applications.excludeapplications) {
+
+        if (($excludeapp -ne "Office365") -and ($includeapp -ne "All")) {
+            $excludeapplist += (($ServicePrincipals | ? { $_.appid -eq $includeapp }).appDisplayName + ",")
+        }
+        elseif ($excludeapp -eq "Office365") {
+            $excludeapplist += "Office365," 
+        }
+        elseif ($excludeapp -eq "All") {
+            $excludeapplist += "All," 
+        }
+    }
+
+    ##Process Included users
+    foreach ($includeuser in $policy.conditions.users.includeusers) {
+        if ($includeuser -eq "All") {
+            $includeUserList = "All"
+
+        }
+        else {
+            $UPN = FindUser -Token $token -User $includeuser
+            $includeUserList += ( "$UPN," )
+
+        }
+    }
+
+    ##Process Excluded users
+    foreach ($excludeuser in $policy.conditions.users.excludeusers) {
+        if ($excludeuser -eq "All") {
+            $excludeUserList = "All"
+        }
+        else {
+            $UPN = FindUser -Token $token -User $excludeuser
+            $excludeUserList += ( "$UPN," )
+                
+        }
+    }
+
+
+    ##Process Included Groups
+    foreach ($includegroup in $policy.conditions.users.includegroups) {
+        if ($includegroup -eq "All") {
+            $includegroupList = "All"
+
+        }
+        else {
+            $GroupName = FindGroup -Token $token -group $includegroup
+            $includegroupList += ( "$GroupName," )
+
+        }
+    }
+
+        
+    ##Process Excluded Groups
+    foreach ($excludegroup in $policy.conditions.users.excludegroups) {
+        if ($excludegroup -eq "All") {
+            $excludeGroupList = "All"
+        }
+        else {
+            $GroupName = FindGroup -Token $token -group $excludegroup
+
+            $excludeGroupList += ( "$GroupName," )
+                    
+        }
+    }
+
+
+
+
+
+    $policy.conditions.applications.includeapplications = $includeapplist
+    $policy.conditions.applications.excludeapplications = $excludeapplist
+    $policy.conditions.users.includeusers = $includeuserlist
+    $policy.conditions.users.excludeusers = $excludeuserlist
+    $policy.conditions.users.includegroups = $includegrouplist
+    $policy.conditions.users.excludegroups = $excludegrouplist
+
+    return $policy
+    
+
+}
+function Report-ConditionalAccess {
 
     <#
     .SYNOPSIS
@@ -111,7 +263,9 @@ function Report-ConditionalAccess{
         [parameter(Mandatory = $true)]
         $tenantId,
         [parameter(Mandatory = $true)]
-        $clientSecret
+        $clientSecret,
+        [parameter(Mandatory = $false)]
+        $PerformTranslation = $False
 
     )
 
@@ -122,9 +276,16 @@ function Report-ConditionalAccess{
 
 
 
-    foreach($policy in $policies){
+    foreach ($policy in $policies) {
 
-        $policy | convertto-json | out-file ("$($policy.displayName).json").replace('[','').replace(']','').replace('/','')
+
+        if ($PerformTranslation) {
+
+            $Policy = PerformTranslation -Token $token -Policy $Policy
+
+        }
+
+        $policy | convertto-json | out-file ("$($policy.displayName).json").replace('[', '').replace(']', '').replace('/', '')
 
     }
 
