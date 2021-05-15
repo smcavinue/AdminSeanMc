@@ -1,5 +1,5 @@
 function GetDelegatedGraphToken {
-
+ 
     <#
     .SYNOPSIS
     Azure AD OAuth Application Token for Graph API
