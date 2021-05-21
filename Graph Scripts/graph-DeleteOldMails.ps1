@@ -196,7 +196,7 @@ Users UPN
 
 
 $token = GetGraphToken -ClientSecret $ClientSecret -ClientID $ClientID -TenantID $TenantID
-
+$mailbox = $mailbox.replace("'","`'")
 $Apiuri = "https://graph.microsoft.com/v1.0/users/$mailbox/messages?`$filter=receivedDateTime le $date"
 
 write-host "checking Mails via: $Apiuri"
