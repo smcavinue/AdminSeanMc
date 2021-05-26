@@ -25,6 +25,14 @@
 
     .PARAMETER SendInvite
     -Define if the invitation should be sent ($true) or URL returned ($false)
+
+    .Example
+    To send an invitation and trigger an email
+    .\graph-CreateGuestUserInvitation.ps1 -UserDisplayName "SeanTest" -UserEmail "smcavinue@gmail.com" -ClientSecret $clientSecret -TenantID $tenantID -ClientID $clientID -SendInvite:$true -UserMessage "This is your Guest user invitation to the Contoso Tenant, please contact your account manager or check out the documentation on https://seanmcavinue.net"
+
+    .Example
+    To create an invitation and return the redemption URL
+     .\graph-CreateGuestUserInvitation.ps1 -UserDisplayName "SeanTest" -UserEmail "smcavinue@gmail.com" -ClientSecret $clientSecret -TenantID $tenantID -ClientID $clientID -SendInvite:$false
     #>
 Param(
     [parameter(Mandatory = $true)]
