@@ -210,6 +210,7 @@ foreach ($contact in $Results) {
     }
     else {
         ##Add entry to list
+        write-host "Adding $contactuid to Contact List"
         $Contactlist += $ContactUID
 
     }
