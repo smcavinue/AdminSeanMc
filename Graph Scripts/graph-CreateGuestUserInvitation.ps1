@@ -185,6 +185,14 @@ if($sendinvite){
     write-host "Invitation has been sent to $useremail"
 }else{
 
-write-host "Invitation Redemption URL is: $($invitation.inviteRedeemUrl)"
+    $object = [PSCustomObject]@{
+        DisplayName   = $userDisplayName
+        Email         = $useremail
+        URL           = $invitation.inviteRedeemUrl
+    }
+
+    $object | export-csv InvitationURLs.csv -NoClobber -NoTypeInformation -Append
+write-host "Invitation Redemption URL is: $($invitation.inviteRedeemUrl) and has been exported to InvitationURLs.csv file"
+
 
 }
