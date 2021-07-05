@@ -1,5 +1,5 @@
 <##Author: Sean McAvinue
-##Details: Graph / PowerShell Script to generate a report of Teams storage including Private Channels
+##Details: Graph / PowerShell Script to generate a report of Teams storage paths including Private Channels
 ##          Please fully read and test any scripts before running in your production environment!
         .SYNOPSIS
         Generates a CSV Report of Teams Storage including Private channels
@@ -166,44 +166,46 @@ foreach ($team in $teams) {
 
     ##Build Top Level Group Entry
     $ExportObject = [PSCustomObject]@{
-        "Team ID"             = $Team.id
+        "Team ID"              = $Team.id
         "Team Name"            = $Team.DisplayName
-        "Private Channel Name" = "N/A"
-        "SharePoint URL"          = $Drive.webUrl
-        "Storage Used (Bytes)"      = $Drive.quota.used
+        "Channel Name"         = "N/A"
+        "Channel Type"         = "N/A"
+        "SharePoint URL"       = $Drive.webUrl
+        "Storage Used (Bytes)" = $Drive.quota.used
     }
 
     ##Export Team Size to Report
     $ExportObject | export-csv $csvPath -NoClobber -NoTypeInformation -Append
 
     ##Build Request to list Team Channels
-    $apiuri = "https://graph.microsoft.com/v1.0/teams/$($Team.id)/channels?`$filter=membershipType eq 'private'"
+    $apiuri = "https://graph.microsoft.com/v1.0/teams/$($Team.id)/channels"
 
     ##List Team Channels
-    $PrivateChannels = RunQueryandEnumerateResults -apiUri $apiUri -token $token
+    $Channels = RunQueryandEnumerateResults -apiUri $apiUri -token $token
 
-    foreach($privateChannel in $PrivateChannels){
+    foreach ($Channel in $Channels) {
 
-    ##Build Private channel files folder query
-    $apiUri = "https://graph.microsoft.com/beta/teams/$($Team.id)/channels/$($PrivateChannel.id)/filesfolder"
+        ##Build Private channel files folder query
+        $apiUri = "https://graph.microsoft.com/beta/teams/$($Team.id)/channels/$($Channel.id)/filesfolder"
 
-    try{
-    ##Get Storage Details of Channel
-    $Drive = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token)" } -Uri $apiUri -Method Get)
-    }
-    catch{
+        try {
+            ##Get Storage Details of Channel
+            $Drive = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token)" } -Uri $apiUri -Method Get)
+        }
+        catch {
 
-        write-host "Channel files not provisioned for $apiuri" 
-        $team.displayName | out-file c:\temp\channelsnot
+            write-host "Channel files not provisioned for $apiuri" 
+            #$team.displayName | out-file c:\temp\channelsnotfound.csv -append
 
-    }
-    ##Build Private Channel Entry
+        }
+        ##Build Private Channel Entry
         $ExportObject = [PSCustomObject]@{
-            "Team ID"             = $Team.id
+            "Team ID"              = $Team.id
             "Team Name"            = $Team.DisplayName
-            "Private Channel Name" = $PrivateChannel.displayName
-            "SharePoint URL"          = $Drive.webUrl
-            "Storage Used (Bytes)"      = $Drive.size
+            "Channel Name"         = $Channel.displayName
+            "Channel Type"         = $Channel.membershipType
+            "SharePoint URL"       = $Drive.webUrl
+            "Storage Used (Bytes)" = $Drive.size
         }
     
         ##Export Team Size to Report
