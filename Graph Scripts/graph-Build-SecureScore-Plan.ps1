@@ -240,7 +240,8 @@ function CreateTasks {
     {
         "planId": '$($Bucket.planid)',
         "bucketId": '$($Bucket.id)',
-        "title": '$($Item.controlname.tostring())'
+        "title": '$($Item.controlname.tostring())',
+        "percentComplete": $([int]$Item.scoreInPercentage)
       }
 "@
 
@@ -252,11 +253,15 @@ function CreateTasks {
     ##Add task details
     $RequestBody = @"
         {
-        "description": "$($Item.description)"
+        'description': '$($Item.description.replace("'","").replace("’",""))',
+        'previewType': 'description'
           }
 "@
 
+    write-host $RequestBody
+    
     $apiUri = "https://graph.microsoft.com/v1.0/planner/tasks/$($task.id)/details"
+    write-host $apiuri
     $taskdetails = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $ApiUri -Method Get)
 
     Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.AccessToken)";'If-Match'=$taskdetails.'@odata.etag'} -ContentType 'application/json' -Body $RequestBody -Uri $apiUri -Method Patch
@@ -293,7 +298,7 @@ $Group = CreateGroup -token $token
 
 ##Wait one minute for Group Provisioning to finish
 write-host "Waiting for Group to be provisioned"
-start-sleep -Seconds 60
+start-sleep -Seconds 30
 
 ##Create Plan in new group
 $Plan = CreatePlan -token $token -GroupID $group.id
