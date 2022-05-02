@@ -215,7 +215,6 @@ foreach ($teamgroup in $TeamGroups) {
     
 
     $TeamDetails = $null
-    $SiteURL = $null
     $apiuri = "https://graph.microsoft.com/v1.0/groups/$($teamgroup.id)/drive/"
     $TeamDetails = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $apiUri -Method Get)
 
