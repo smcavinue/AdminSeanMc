@@ -694,7 +694,7 @@ Try {
     ##Export Conditional Access Tab
     $CAOutput   | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Conditional Access" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export M365 Apps Usage
-    $M365AppsUsage  | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "M365 Apps Usage Usage" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $M365AppsUsage  | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "M365 Apps Usage" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Unified Groups tab
     $Groups | ? { ($_.grouptypes -Contains "unified") -and ($_.resourceProvisioningOptions -notcontains "Team") } | select id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Unified Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Mailbox Statistics tab
