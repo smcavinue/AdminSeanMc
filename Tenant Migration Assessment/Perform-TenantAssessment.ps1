@@ -169,25 +169,50 @@ $ProgressTracker++
 $TeamGroups = $Groups | ? { ($_.grouptypes -Contains "unified") -and ($_.resourceProvisioningOptions -contains "Team") }
 
 foreach ($teamgroup in $TeamGroups) {
-    $apiuri = "https://graph.microsoft.com/beta/teams/$($teamgroup.id)/channels"
+    $apiuri = "https://graph.microsoft.com/beta/teams/$($teamgroup.id)/allchannels"
     $Teamchannels = RunQueryandEnumerateResults
     $standardchannels = ($teamchannels | ? { $_.membershipType -eq "standard" })
     $privatechannels = ($teamchannels | ? { $_.membershipType -eq "private" })
+    $outgoingsharedchannels = ($teamchannels | ? { ($_.membershipType -eq "shared") -and (($_."@odata.id") -like "*$($teamgroup.id)*") })
+    $incomingsharedchannels = ($teamchannels | ? { ($_.membershipType -eq "shared") -and ($_."@odata.id" -notlike "*$($teamgroup.id)*") })
     $teamgroup | Add-Member -MemberType NoteProperty -Name "StandardChannels" -Value $standardchannels.id.count -Force
     $teamgroup | Add-Member -MemberType NoteProperty -Name "PrivateChannels" -Value $privatechannels.id.count -Force
-    $privatechannelSize = $null
-    $PrivateChannelObject = $null
+    $teamgroup | Add-Member -MemberType NoteProperty -Name "SharedChannels" -Value $outgoingsharedchannels.id.count -Force
+    $teamgroup | Add-Member -MemberType NoteProperty -Name "IncomingSharedChannels" -Value $incomingsharedchannels.id.count -Force
+    $privatechannelSize = 0
+    
     foreach ($Privatechannel in $privatechannels) {
+        $PrivateChannelObject = $null
         $apiuri = "https://graph.microsoft.com/beta/teams/$($teamgroup.id)/channels/$($Privatechannel.id)/FilesFolder"
         Try {
-            $PrivateChannelObject = (Invoke-WebRequest -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $apiUri -Method Get)
+            $PrivateChannelObject = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $apiUri -Method Get)
             $Privatechannelsize += $PrivateChannelObject.size
+            write-host $PrivateChannelObject.size
         }
         Catch {
             $Privatechannelsize += 0
         }
     }
+
+    $sharedchannelSize = 0
+    
+    foreach ($sharedchannel in $outgoingsharedchannels) {
+        $sharedChannelObject = $null
+        $apiuri = "https://graph.microsoft.com/beta/teams/$($teamgroup.id)/channels/$($Sharedchannel.id)/FilesFolder"
+        Try {
+            $SharedChannelObject = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $apiUri -Method Get)
+            $Sharedchannelsize += $SharedChannelObject.size
+            write-host $SharedChannelObject.size -ForegroundColor green
+        }
+        Catch {
+            write-host "Failed for $apiuri"
+            $Sharedchannelsize += 0
+        }
+    }
+
     $teamgroup | Add-Member -MemberType NoteProperty -Name "PrivateChannelsSize" -Value $privatechannelSize -Force
+    $teamgroup | Add-Member -MemberType NoteProperty -Name "SharedChannelsSize" -Value $privatechannelSize -Force
+    
 
     $TeamDetails = $null
     $SiteURL = $null
@@ -647,22 +672,22 @@ $ProgressStatus = "Exporting report..."
 UpdateProgress
 $ProgressTracker++
 Try {
-    IF($TemplatePresent){
+    IF ($TemplatePresent) {
         ##Add cover sheet
         Copy-ExcelWorksheet -SourceObject .\TenantAssessment-Template.xlsx -SourceWorksheet "High-Level" -DestinationWorkbook "$FilePath\$Filename" -DestinationWorksheet "High-Level"
         
     }
     ##Export Data File##
     ##Export User Accounts tab
-    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "User")} | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, OneDriveSizeGB, OneDriveFileCount, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "User Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "User") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, OneDriveSizeGB, OneDriveFileCount, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "User Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export Shared Mailboxes tab
-    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "shared")} | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Shared Mailboxes" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "shared") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Shared Mailboxes" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export Resource Accounts tab
-    $users | ? { ($_.usertype -ne "Guest") -and (($_.mailboxtype -eq "Room") -or ($_.mailboxtype -eq "Equipment"))} | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Resource Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    $users | ? { ($_.usertype -ne "Guest") -and (($_.mailboxtype -eq "Room") -or ($_.mailboxtype -eq "Equipment")) } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Resource Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export SharePoint Tab
-    $SharePoint | ? { $_.teamid -eq $null } | select 'Site ID', 'Site URL', 'Owner Display Name', 'Is Deleted', 'Last Activity Date', 'File Count', 'Active File Count', 'Page View Count', 'Storage Used (Byte)', 'Root Web Template', 'Owner Principal Name'| Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "SharePoint Sites" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $SharePoint | ? { $_.teamid -eq $null } | select 'Site ID', 'Site URL', 'Owner Display Name', 'Is Deleted', 'Last Activity Date', 'File Count', 'Active File Count', 'Page View Count', 'Storage Used (Byte)', 'Root Web Template', 'Owner Principal Name' | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "SharePoint Sites" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Teams Tab
-    $TeamGroups | select id, displayname, standardchannels, privatechannels, Datasize, PrivateChannelsSize, mail, URL, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Teams"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $TeamGroups | select id, displayname, standardchannels, privatechannels, SharedChannels, Datasize, PrivateChannelsSize, SharedChannelsSize, IncomingSharedChannels, mail, URL, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Teams"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Guest Accounts tab
     $users | ? { $_.usertype -eq "Guest" } | Select-Object id, accountenabled, userPrincipalName, mail, displayName, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Guest Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export AAD Apps Tab

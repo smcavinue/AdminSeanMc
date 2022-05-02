@@ -99,7 +99,8 @@ Try {
         "7ab1d382-f21e-4acd-a863-ba3e13f7da61",
         "2280dda6-0bfd-44ee-a2f4-cb867cfc4c1e",
         "230c1aed-a721-4c5d-9cb4-a90514e508ef",
-        "37730810-e9ba-4e46-b07e-8ca78d182097"
+        "37730810-e9ba-4e46-b07e-8ca78d182097",
+        "59a6b24b-4225-4393-8165-ebaec5f55d7a"
     )
 
     $permArray = @()
