@@ -187,7 +187,7 @@ foreach ($teamgroup in $TeamGroups) {
         Try {
             $PrivateChannelObject = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $apiUri -Method Get)
             $Privatechannelsize += $PrivateChannelObject.size
-            write-host $PrivateChannelObject.size
+
         }
         Catch {
             $Privatechannelsize += 0
@@ -202,7 +202,7 @@ foreach ($teamgroup in $TeamGroups) {
         Try {
             $SharedChannelObject = (Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $apiUri -Method Get)
             $Sharedchannelsize += $SharedChannelObject.size
-            write-host $SharedChannelObject.size -ForegroundColor green
+
         }
         Catch {
             write-host "Failed for $apiuri"
