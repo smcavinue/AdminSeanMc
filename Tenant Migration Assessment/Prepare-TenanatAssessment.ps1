@@ -19,7 +19,7 @@
     #>
 
 ##
-#Requires -modules azureadpreview
+#Requires -modules azuread
 function New-AadApplicationCertificate {
     [CmdletBinding(DefaultParameterSetName = 'DefaultSet')]
     Param(
