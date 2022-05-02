@@ -643,7 +643,7 @@ foreach ($user in $users) {
 
 
 
-$ProgressStatus = "Exporting raw report..."
+$ProgressStatus = "Exporting report..."
 UpdateProgress
 $ProgressTracker++
 Try {
