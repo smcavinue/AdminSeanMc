@@ -19,7 +19,7 @@
     #>
 
 ##
-#Requires -modules azuread
+#Requires -modules azureadpreview
 function New-AadApplicationCertificate {
     [CmdletBinding(DefaultParameterSetName = 'DefaultSet')]
     Param(
@@ -158,8 +158,8 @@ else {
         ##Enable Service Principal
         $SP = New-AzureADServicePrincipal -AppID $appReg.AppID
         ##https://adamtheautomator.com/exchange-online-v2/
-        ##Add the GA Role to the app service principal
-        $directoryRole = 'Global Administrator'
+        ##Add the Global Reader to the app service principal
+        $directoryRole = 'Global Reader'
         ## Find the ObjectID of 'Exchange Service Administrator'
         $RoleId = (Get-AzureADDirectoryRole | Where-Object { $_.displayname -eq $directoryRole }).ObjectID
         ## Add the service principal to the directory role

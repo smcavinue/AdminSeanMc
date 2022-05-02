@@ -697,16 +697,6 @@ Try {
     $M365AppsUsage  | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "M365 Apps Usage" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Unified Groups tab
     $Groups | ? { ($_.grouptypes -Contains "unified") -and ($_.resourceProvisioningOptions -notcontains "Team") } | select id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Unified Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
-    ##Export Mailbox Statistics tab
-    $MailboxStats | Select Objectid, MailboxGuid, DisplayName, primarysmtpaddress, ItemCount, TotalItemSize, Database | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Mailbox Statistics" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
-    ##Export Shared Mailbox tab
-    $SharedMailboxes | Select ExternalDirectoryObjectId, DisplayName, UserPrincipalName, MailboxSize, ItemCount, Alias, EmailAddresses, RecipientTypeDetails | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Shared Mailbox Statistics" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
-    ##Export Room Mailbox tab
-    $RoomMailboxes | Select ExternalDirectoryObjectId, DisplayName, UserPrincipalName, MailboxSize, ItemCount, Alias, EmailAddresses, RecipientTypeDetails | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Room Mailbox Statistics" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
-    ##Export Equipment Mailbox tab
-    $EquipmentMailboxes | Select ExternalDirectoryObjectId, DisplayName, UserPrincipalName, MailboxSize, ItemCount, Alias, EmailAddresses, RecipientTypeDetails | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Equipment Mailbox Statistics" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
-    ##Export Archive Mailbox Statistics tab
-    $ArchiveStats | Select Objectid, MailboxGuid, DisplayName, primarysmtpaddress, ItemCount, TotalItemSize, Database | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Archive Mailbox Statistics" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Standard Groups tab
     $Groups | ? { $_.grouptypes -notContains "unified" } | select id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Standard Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Mail Contacts tab
