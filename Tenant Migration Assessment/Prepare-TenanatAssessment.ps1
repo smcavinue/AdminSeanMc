@@ -143,7 +143,7 @@ $AppReg = Get-AzureADApplication -Filter "DisplayName eq '$($appName)'"  -ErrorA
 
 ##If the app reg already exists, do nothing
 if ($appReg) {
-    write-host "App already exists, exiting" -ForegroundColor yellow
+    write-host "App already exists - Please delete the existing 'Tenant Assessment Tool' app from Azure AD and rerun the preparation script to recreate, exiting" -ForegroundColor yellow
     Pause
     exit
 }
@@ -154,7 +154,7 @@ else {
         $appReg = New-AzureADApplication -DisplayName $appName -ReplyUrls $appURI -ErrorAction Stop -RequiredResourceAccess $Permissions,$EXOapiPermission
         
         Write-Host "Waiting for app to provision..."
-        start-sleep -Seconds 10
+        start-sleep -Seconds 20
         ##Enable Service Principal
         $SP = New-AzureADServicePrincipal -AppID $appReg.AppID
         ##https://adamtheautomator.com/exchange-online-v2/

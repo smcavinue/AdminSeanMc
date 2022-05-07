@@ -76,18 +76,8 @@ function UpdateProgress {
     Write-Progress -Activity "Tenant Assessment in Progress" -Status "Processing Task $ProgressTracker of $($TotalProgressTasks): $ProgressStatus" -PercentComplete (($ProgressTracker / $TotalProgressTasks) * 100)
 }
 $ProgressTracker = 1
-$TotalProgressTasks = 27
+$TotalProgressTasks = 29
 $ProgressStatus = $null
-
-function RefreshEXOSession {
-
-    $session = Get-PSSession
-    if ($session.state -ne "opened") {
-        Disconnect-ExchangeOnline -Confirm:$False
-        Get-PSSession | Remove-PSSession
-        Connect-ExchangeOnline -Certificate $Certificate -AppID $clientid -Organization ($orgdetails.verifieddomains  | ? { $_.isinitial -eq "true" }).name -ShowBanner:$false
-    }
-}
 
 $ProgressStatus = "Importing modules..."
 UpdateProgress
@@ -168,7 +158,14 @@ $ProgressTracker++
 ##Get Teams details
 $TeamGroups = $Groups | ? { ($_.grouptypes -Contains "unified") -and ($_.resourceProvisioningOptions -contains "Team") }
 
+$i = 1
+
 foreach ($teamgroup in $TeamGroups) {
+
+    $ProgressStatus = "Processing Team $i of $($Teamgroups.count)..."
+    UpdateProgress
+    $i++
+
     $apiuri = "https://graph.microsoft.com/beta/teams/$($teamgroup.id)/allchannels"
     $Teamchannels = RunQueryandEnumerateResults
     $standardchannels = ($teamchannels | ? { $_.membershipType -eq "standard" })
@@ -414,6 +411,15 @@ foreach ($Site in $Sharepoint) {
 
 }
 
+$ProgressStatus = "Getting Mailbox Usage report..."
+UpdateProgress
+$ProgressTracker++
+
+##Get Mailbox Report##
+$apiUri = "https://graph.microsoft.com/v1.0/reports/getMailboxUsageDetail(period='D30')"
+$MailboxStatsReport = ((Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $apiUri -Method Get) | ConvertFrom-Csv)
+
+
 ##Get M365 Apps usage report
 $apiUri = "https://graph.microsoft.com/v1.0/reports/getOffice365ServicesUserCounts(period='D30')"
 $M365AppsUsage = ((Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $apiUri -Method Get) | ConvertFrom-Csv)
@@ -436,7 +442,6 @@ UpdateProgress
 $ProgressTracker++
 
 Try {
-    Get-PSSession | Remove-PSSession
     Connect-ExchangeOnline -Certificate $Certificate -AppID $clientid -Organization ($orgdetails.verifieddomains | ? { $_.isinitial -eq "true" }).name -ShowBanner:$false
 }
 catch {
@@ -449,7 +454,7 @@ $ProgressStatus = "Getting shared and room mailboxes..."
 UpdateProgress
 $ProgressTracker++
 ##Get Shared and Resource Mailboxes
-RefreshEXOSession
+
 [array]$RoomMailboxes = Get-EXOMailbox -RecipientTypeDetails RoomMailbox -ResultSize unlimited
 [array]$EquipmentMailboxes = Get-EXOMailbox -RecipientTypeDetails EquipmentMailbox -ResultSize unlimited
 [array]$SharedMailboxes = Get-EXOMailbox -RecipientTypeDetails SharedMailbox -ResultSize Unlimited
@@ -458,9 +463,14 @@ $ProgressStatus = "Getting room mailbox statistics..."
 UpdateProgress
 $ProgressTracker++
 
+$i = 1
+
 ##Get Resource Mailbox Sizes
 foreach ($room in $RoomMailboxes) {
-    RefreshEXOSession
+    $ProgressStatus = "Getting room mailbox statistics $i of $($RoomMailboxes.count)..."
+    $i++
+    UpdateProgress
+
     $RoomStats = $null
     $RoomStats = get-EXOmailboxstatistics $room.primarysmtpaddress
     $room | Add-Member -MemberType NoteProperty -Name MailboxSize -Value $RoomStats.TotalItemSize -Force
@@ -470,8 +480,17 @@ foreach ($room in $RoomMailboxes) {
     $room.EmailAddresses = $room.EmailAddresses -join ';'
 }
 
+$ProgressStatus = "Getting Equipment mailbox statistics..."
+UpdateProgress
+$ProgressTracker++
+
+$i = 1
+
 foreach ($equipment in $EquipmentMailboxes) {
-    RefreshEXOSession
+    $ProgressStatus = "Getting Equipment mailbox statistics $i of $($EquipmentMailboxes.count)..."
+    $i++
+    UpdateProgress
+
     $EquipmentStats = $null
     $EquipmentStats = get-EXOmailboxstatistics $equipment.primarysmtpaddress
     $equipment | Add-Member -MemberType NoteProperty -Name MailboxSize -Value $EquipmentStats.TotalItemSize -Force
@@ -486,9 +505,14 @@ $ProgressStatus = "Getting shared mailbox statistics..."
 UpdateProgress
 $ProgressTracker++
 
+$i = 1
+
 ##Get Shared Mailbox Sizes
 foreach ($SharedMailbox in $SharedMailboxes) {
-    RefreshEXOSession
+    $ProgressStatus = "Getting shared mailbox statistics $i of $($SharedMailboxes.count)..."
+    $i++
+    UpdateProgress
+
     $SharedStats = $null
     $SharedStats = get-EXOmailboxstatistics $SharedMailbox.primarysmtpaddress
     $SharedMailbox | Add-Member -MemberType NoteProperty -Name MailboxSize -Value $SharedStats.TotalItemSize -Force
@@ -504,10 +528,9 @@ $ProgressTracker++
 
 ##Collect Mailbox statistics
 $MailboxStats = @()
-foreach ($user in ($users | ? { $_.mail -ne $null })) {
-    RefreshEXOSession
+foreach ($user in ($users | ? { ($_.mail -ne $null ) -and ($_.userType -eq "Member") })) {
     $stats = $null
-    $stats = get-EXOmailboxstatistics $user.mail -erroraction SilentlyContinue
+    $stats = $MailboxStatsReport | ? { $_.'User Principal Name' -eq $user.userprincipalname }
     $stats | Add-Member -MemberType NoteProperty -Name ObjectID -Value $user.id -Force
     $stats | Add-Member -MemberType NoteProperty -Name Primarysmtpaddress -Value $user.mail -Force
     $MailboxStats += $stats
@@ -519,13 +542,17 @@ $ProgressStatus = "Getting archive mailbox statistics..."
 UpdateProgress
 $ProgressTracker++
 
+$i = 0
+
 ##Collect Archive Statistics
 $ArchiveStats = @()
-[array]$ArchiveMailboxes = get-mailbox -Archive -ResultSize unlimited
+[array]$ArchiveMailboxes = get-EXOmailbox -Archive -ResultSize unlimited
 foreach ($archive in $ArchiveMailboxes) {
-    RefreshEXOSession
+    $ProgressStatus = "Getting archive mailbox statistics $i of $($ArchiveMailboxes.count)..."
+    $i++
+    UpdateProgress
     $stats = $null
-    $stats = get-mailboxstatistics $archive.PrimarySmtpAddress -Archive #-erroraction SilentlyContinue
+    $stats = get-EXOmailboxstatistics $archive.PrimarySmtpAddress -Archive #-erroraction SilentlyContinue
     $stats | Add-Member -MemberType NoteProperty -Name ObjectID -Value $archive.ExternalDirectoryObjectId -Force
     $stats | Add-Member -MemberType NoteProperty -Name Primarysmtpaddress -Value $archive.primarysmtpaddress -Force
     $ArchiveStats += $stats
@@ -538,7 +565,7 @@ $ProgressTracker++
 
 ##Collect Mail Contacts
 ##Collect transport rules
-RefreshEXOSession
+
 $MailContacts = Get-MailContact -ResultSize unlimited | select displayname, alias, externalemailaddress, emailaddresses, HiddenFromAddressListsEnabled
 foreach ($mailcontact in $MailContacts) {
     $mailcontact.emailaddresses = $mailcontact.emailaddresses -join ';'
@@ -549,7 +576,7 @@ UpdateProgress
 $ProgressTracker++
 
 ##Collect transport rules
-RefreshEXOSession
+
 $Rules = $null
 [array]$Rules = Get-TransportRule -ResultSize unlimited | select name, state, mode, priority, description, comments
 $RulesOutput = @()
@@ -565,7 +592,7 @@ UpdateProgress
 $ProgressTracker++
 
 ##Collect Mailflow Connectors
-RefreshEXOSession
+
 $InboundConnectors = Get-InboundConnector | select enabled, name, connectortype, connectorsource, SenderIPAddresses, SenderDomains, RequireTLS, RestrictDomainsToIPAddresses, RestrictDomainsToCertificate, CloudServicesMailEnabled, TreatMessagesAsInternal, TlsSenderCertificateName, EFTestMode, Comment 
 foreach ($inboundconnector in $InboundConnectors) {
     $inboundconnector.senderipaddresses = $inboundconnector.senderipaddresses -join ';'
@@ -626,7 +653,7 @@ $users | Add-Member -MemberType NoteProperty -Name ArchiveSizeGB -Value "" -Forc
 $users | Add-Member -MemberType NoteProperty -Name Mailboxtype -Value "" -Force
 $users | Add-Member -MemberType NoteProperty -Name ArchiveItemCount -Value "" -Force
 
-foreach ($user in $users) {
+foreach ($user in ($users | ? {$_.usertype -ne "Guest"})) {
     ##Set Mailbox Type
     if ($roommailboxes.ExternalDirectoryObjectId -contains $user.id) {
         $user.Mailboxtype = "Room"
@@ -643,9 +670,9 @@ foreach ($user in $users) {
 
     ##Set Mailbox Size and count
     If ($MailboxStats | ? { $_.objectID -eq $user.id }) {
-        $user.MailboxSizeGB = (((($MailboxStats | ? { $_.objectID -eq $user.id }).totalitemsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+        $user.MailboxSizeGB = (((($MailboxStats | ? { $_.objectID -eq $user.id }).'Storage Used (Byte)' / 1024) / 1024) / 1024) 
         $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
-        $user.MailboxItemCount = ($MailboxStats | ? { $_.objectID -eq $user.id }).itemcount
+        $user.MailboxItemCount = ($MailboxStats | ? { $_.objectID -eq $user.id }).'item count'
     }
 
     
@@ -654,7 +681,7 @@ foreach ($user in $users) {
     If ($ArchiveStats | ? { $_.objectID -eq $user.id }) {
         $user.ArchiveSizeGB = (((($ArchiveStats | ? { $_.objectID -eq $user.id }).totalitemsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
         $user.ArchiveSizeGB = [math]::Round($user.ArchiveSizeGB, 2)
-        $user.ArchiveItemCount = ($ArchiveStats | ? { $_.objectID -eq $user.id }).itemcount
+        $user.ArchiveItemCount = ($ArchiveStats | ? { $_.objectID -eq $user.id }).ItemCount
     }
 
     ##Set OneDrive Size and count
@@ -673,7 +700,7 @@ $ProgressTracker++
 Try {
     IF ($TemplatePresent) {
         ##Add cover sheet
-        Copy-ExcelWorksheet -SourceObject .\TenantAssessment-Template.xlsx -SourceWorksheet "High-Level" -DestinationWorkbook "$FilePath\$Filename" -DestinationWorksheet "High-Level"
+        Copy-ExcelWorksheet -SourceObject TenantAssessment-Template.xlsx -SourceWorksheet "High-Level" -DestinationWorkbook "$FilePath\$Filename" -DestinationWorksheet "High-Level"
         
     }
     ##Export Data File##
@@ -684,7 +711,7 @@ Try {
     ##Export Resource Accounts tab
     $users | ? { ($_.usertype -ne "Guest") -and (($_.mailboxtype -eq "Room") -or ($_.mailboxtype -eq "Equipment")) } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Resource Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export SharePoint Tab
-    $SharePoint | ? {($_.teamid -eq $null) -and ($_.'Root Web Template' -ne "Team Channel")} | select 'Site ID', 'Site URL', 'Owner Display Name', 'Is Deleted', 'Last Activity Date', 'File Count', 'Active File Count', 'Page View Count', 'Storage Used (Byte)', 'Root Web Template', 'Owner Principal Name' | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "SharePoint Sites" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $SharePoint | ? { ($_.teamid -eq $null) -and ($_.'Root Web Template' -ne "Team Channel") } | select 'Site ID', 'Site URL', 'Owner Display Name', 'Is Deleted', 'Last Activity Date', 'File Count', 'Active File Count', 'Page View Count', 'Storage Used (Byte)', 'Root Web Template', 'Owner Principal Name' | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "SharePoint Sites" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Teams Tab
     $TeamGroups | select id, displayname, standardchannels, privatechannels, SharedChannels, Datasize, PrivateChannelsSize, SharedChannelsSize, IncomingSharedChannels, mail, URL, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Teams"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Guest Accounts tab
@@ -720,7 +747,7 @@ Try {
 catch {
     write-host "Error exporting report, check permissions and make sure the file is not open!"
     pause
-    exit
+
 }
 
 $ProgressStatus = "Finalizing..."
