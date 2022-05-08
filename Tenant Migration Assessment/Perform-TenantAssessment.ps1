@@ -76,7 +76,7 @@ function UpdateProgress {
     Write-Progress -Activity "Tenant Assessment in Progress" -Status "Processing Task $ProgressTracker of $($TotalProgressTasks): $ProgressStatus" -PercentComplete (($ProgressTracker / $TotalProgressTasks) * 100)
 }
 $ProgressTracker = 1
-$TotalProgressTasks = 29
+$TotalProgressTasks = 27
 $ProgressStatus = $null
 
 $ProgressStatus = "Importing modules..."
@@ -620,25 +620,6 @@ foreach ($domain in $orgdetails.verifieddomains) {
         $MXRecordsObject += $MXRecord
     }
 }
-
-$ProgressStatus = "Getting mailbox permissions..."
-UpdateProgress
-$ProgressTracker++
-
-##Get PF Mailboxes
-
-
-##Get Nested Mailbox Permissions
-
-
-$ProgressStatus = "Getting group membership..."
-UpdateProgress
-$ProgressTracker++
-
-##Get Group Memberships
-
-
-
 
 $ProgressStatus = "Updating references..."
 UpdateProgress
