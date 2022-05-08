@@ -40,7 +40,7 @@ function New-AadApplicationCertificate {
     $notAfter = (Get-Date).AddYears(2)
 
     try {
-        $cert = (New-SelfSignedCertificate -DnsName "seanmcavinue.net" -CertStoreLocation "cert:\currentuser\My" -KeyExportPolicy Exportable -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider" -NotAfter $notAfter)
+        $cert = (New-SelfSignedCertificate -DnsName "TenantAssessment" -CertStoreLocation "cert:\currentuser\My" -KeyExportPolicy Exportable -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider" -NotAfter $notAfter)
         
         #Write-Verbose "Cert Hash: $($cert.GetCertHash())"
         #Write-Verbose "Cert Thumbprint: $($cert.Thumbprint)"
