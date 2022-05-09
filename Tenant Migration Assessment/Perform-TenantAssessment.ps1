@@ -202,7 +202,6 @@ foreach ($teamgroup in $TeamGroups) {
 
         }
         Catch {
-            write-host "Failed for $apiuri"
             $Sharedchannelsize += 0
         }
     }
@@ -634,7 +633,7 @@ $users | Add-Member -MemberType NoteProperty -Name ArchiveSizeGB -Value "" -Forc
 $users | Add-Member -MemberType NoteProperty -Name Mailboxtype -Value "" -Force
 $users | Add-Member -MemberType NoteProperty -Name ArchiveItemCount -Value "" -Force
 
-foreach ($user in ($users | ? {$_.usertype -ne "Guest"})) {
+foreach ($user in ($users | ? { $_.usertype -ne "Guest" })) {
     ##Set Mailbox Type
     if ($roommailboxes.ExternalDirectoryObjectId -contains $user.id) {
         $user.Mailboxtype = "Room"
@@ -656,7 +655,27 @@ foreach ($user in ($users | ? {$_.usertype -ne "Guest"})) {
         $user.MailboxItemCount = ($MailboxStats | ? { $_.objectID -eq $user.id }).'item count'
     }
 
-    
+    ##Set Shared Mailbox size and count
+    If ($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
+        $user.MailboxSizeGB = (((($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+        $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
+        $user.MailboxItemCount = ($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+    }
+
+    ##Set Equipment Mailbox size and count
+    If ($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
+        $user.MailboxSizeGB = (((($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+        $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
+        $user.MailboxItemCount = ($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+    }
+
+
+    ##Set Room Mailbox size and count
+    If ($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
+        $user.MailboxSizeGB = (((($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+        $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
+        $user.MailboxItemCount = ($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+    }
 
     ##Set archive size and count
     If ($ArchiveStats | ? { $_.objectID -eq $user.id }) {
@@ -688,9 +707,9 @@ Try {
     ##Export User Accounts tab
     $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "User") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, OneDriveSizeGB, OneDriveFileCount, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "User Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export Shared Mailboxes tab
-    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "shared") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, ItemCount, MailboxSize, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Shared Mailboxes" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "shared") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Shared Mailboxes" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export Resource Accounts tab
-    $users | ? { ($_.usertype -ne "Guest") -and (($_.mailboxtype -eq "Room") -or ($_.mailboxtype -eq "Equipment")) } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, ItemCount, MailboxSize, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Resource Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    $users | ? { ($_.usertype -ne "Guest") -and (($_.mailboxtype -eq "Room") -or ($_.mailboxtype -eq "Equipment")) } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Resource Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export SharePoint Tab
     $SharePoint | ? { ($_.teamid -eq $null) -and ($_.'Root Web Template' -ne "Team Channel") } | select 'Site ID', 'Site URL', 'Owner Display Name', 'Is Deleted', 'Last Activity Date', 'File Count', 'Active File Count', 'Page View Count', 'Storage Used (Byte)', 'Root Web Template', 'Owner Principal Name' | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "SharePoint Sites" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Teams Tab
