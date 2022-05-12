@@ -151,7 +151,7 @@ else {
 
     Try {
         ##Create the new App Reg
-        $appReg = New-AzureADApplication -DisplayName $appName -ReplyUrls $appURI -ErrorAction Stop -RequiredResourceAccess $Permissions,$EXOapiPermission
+        $appReg = New-AzureADApplication -DisplayName $appName -ReplyUrls $appURI -ErrorAction Stop -RequiredResourceAccess $Permissions, $EXOapiPermission
         
         Write-Host "Waiting for app to provision..."
         start-sleep -Seconds 20
@@ -160,8 +160,16 @@ else {
         ##https://adamtheautomator.com/exchange-online-v2/
         ##Add the Global Reader to the app service principal
         $directoryRole = 'Global Reader'
-        ## Find the ObjectID of 'Exchange Service Administrator'
+        ## Find the ObjectID of 'Global Reader'
         $RoleId = (Get-AzureADDirectoryRole | Where-Object { $_.displayname -eq $directoryRole }).ObjectID
+        ##Provision Global Reader role if it does not exist
+        if (!$RoleId) {
+            Write-host "Global Reader role not yet provisioned - Provisioning"
+            $template = Get-AzureADDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq $directoryRole }
+            Enable-AzureADDirectoryRole -RoleTemplateId $template.ObjectId
+            $RoleId = (Get-AzureADDirectoryRole | Where-Object { $_.displayname -eq $directoryRole }).ObjectID
+
+        }
         ## Add the service principal to the directory role
         Add-AzureADDirectoryRoleMember -ObjectId $RoleId -RefObjectId $SP.ObjectID -Verbose
     }
