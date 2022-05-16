@@ -278,8 +278,10 @@ function GetSharedFilePermissions {
             LinkPermissions   = $permission.grantedtoidentities.user.email -join (' ')
         }
         $Permismissionarray += $PermissionObject
-        return $Permismissionarray 
+        
     }
+
+    return $Permismissionarray 
 
 }
 
