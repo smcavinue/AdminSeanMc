@@ -21,8 +21,15 @@
 ##
 #Requires -modules azuread
 Param(
-    [Parameter(Mandatory = $false)]
-    [Switch]$UseClientSecret
+    [Parameter(Mandatory = $true,
+        ParameterSetName = 'Secret')]
+    [Switch]$UseClientSecret,
+    [Parameter(Mandatory = $true,
+        ParameterSetName = 'Certificate')]
+    [Switch]$UseCertificate,
+    [Parameter(Mandatory = $false,
+        ParameterSetName = 'Delegated', DontShow, HelpMessage = "Default Delegated Permission")]
+    [Switch]$UseDelegatedPermission = $true
 )
 function New-AadApplicationCertificate {
     [CmdletBinding(DefaultParameterSetName = 'DefaultSet')]
@@ -95,19 +102,42 @@ while ($connected -eq $false) {
 Try {
     $Permissions = New-Object -TypeName "Microsoft.Open.AzureAD.Model.RequiredResourceAccess"
     ##Declare Application Permission - Reference here: https://docs.microsoft.com/en-us/graph/permissions-reference
+    if (!($UseClientSecret) -and !($UseCertificate)) {
+        $permList = @(
+            "572fea84-0151-49b2-9301-11cb16974376",
+            "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+            "a154be20-db9c-4678-8ab7-66f6cc099a59",
+            "5f8c59db-677d-491f-a6b8-5f174b11ec1d",
+            "c79f8feb-a9db-4090-85f9-90d820caa0eb",
+            "48fec646-b2ba-4019-8681-8eb31435aded"
+        )
+
+    }else{
     $permList = @(
         "5b567255-7703-4780-807c-7be8301ae99b",
         "246dd0d5-5bd0-4def-940b-0421030a5b68",
         "df021288-bdef-4463-88db-98f22de89214",
-        "7ab1d382-f21e-4acd-a863-ba3e13f7da61",
-        "37730810-e9ba-4e46-b07e-8ca78d182097"
+        "9a5d68dd-52b0-4cc2-bd40-abcf44ac3a30",
+        "c7fbd983-d9aa-4fa7-84b8-17382c103bc4",
+        "df021288-bdef-4463-88db-98f22de89214"
     )
-
+    }
     $permArray = @()
-    foreach ($perm in $permList) {
-        ##Create perm
-        $permArray += New-Object -TypeName "Microsoft.Open.AzureAD.Model.ResourceAccess" -ArgumentList $perm, "Role"
+
+    if (($UseCertificate) -or ($UseClientSecret)) {
+        foreach ($perm in $permList) {
+            ##Create perm
+            $permArray += New-Object -TypeName "Microsoft.Open.AzureAD.Model.ResourceAccess" -ArgumentList $perm, "Role"
         
+        }
+    }
+    else {
+        foreach ($perm in $permList) {
+            ##Create perm
+            $permArray += New-Object -TypeName "Microsoft.Open.AzureAD.Model.ResourceAccess" -ArgumentList $perm, "Scope"
+        
+        }
+
     }
     ##Add permission list to object
     $permissions.ResourceAccess = $permArray
@@ -135,8 +165,12 @@ else {
 
     Try {
         ##Create the new App Reg
-        $appReg = New-AzureADApplication -DisplayName $appName -ReplyUrls $appURI -ErrorAction Stop -RequiredResourceAccess $Permissions
-        
+        if (!($UseClientSecret) -and !($UseCertificate)) {
+            $appReg = New-AzureADApplication -DisplayName $appName -ReplyUrls $appURI -ErrorAction Stop -RequiredResourceAccess $Permissions -PublicClient:$true
+        }
+        else {
+            $appReg = New-AzureADApplication -DisplayName $appName -ReplyUrls $appURI -ErrorAction Stop -RequiredResourceAccess $Permissions
+        }
         Write-Host "Waiting for app to provision..."
         start-sleep -Seconds 20
     }
@@ -148,10 +182,10 @@ else {
 
 }
 
-If ($UseClientSecret) {
+If (($UseClientSecret)) {
     $appSecret = New-AzureADApplicationPasswordCredential -ObjectId $appReg.objectId -CustomKeyIdentifier ((get-date).ToString().Replace('/', '')) -StartDate (get-date) -EndDate ((get-date).AddDays(1))
 }
-else {
+elseif ($UseCertificate) {
     $Thumbprint = New-AadApplicationCertificate -ClientId $appReg.AppId -CertificatePassword "T3mPP@£6hnhskke!!!" -AddToApplication -certificatename "Tenant Assessment Certificate"
 }
 ##Get tenant ID
@@ -164,8 +198,15 @@ write-host "Consent page will appear, don't forget to log in as admin to grant c
 Start-Process $ConsentURl
 if ( $UseClientSecret) {
     Write-Host "The below details can be used to run the assessment, take note of them and press any button to clear the window.`nTenant ID: $tenantID`nClient ID: $($appReg.appID)`nClient Secret: $($appSecret.value)" -ForegroundColor Green
-}else {
-    Write-Host "The below details can be used to run the assessment, take note of them and press any button to clear the window.`nTenant ID: $tenantID`nClient ID: $($appReg.appID)`nCertificate Thumbprint: $thumbprint" -ForegroundColor Green   
+    Write-Host "The following command can be used to run the assessment with a Client Secret:`n.\Perform-ConditionalAccessDetailReport.ps1 -TenantID $tenantID -ClientID $($appReg.appID) -Secret $($appSecret.value)"
+}
+elseif ($UseCertificate) {
+    Write-Host "The below details can be used to run the assessment, take note of them and press any button to clear the window.`nTenant ID: $tenantID`nClient ID: $($appReg.appID)`nCertificate Thumbprint: $thumbprint" -ForegroundColor Green
+    Write-Host "The following command can be used to run the assessment with a Certificate:`n.\Perform-ConditionalAccessDetailReport.ps1 -TenantID $tenantID -ClientID $($appReg.appID) -CertificateThumbprint $thumbprint"
+}
+else {
+    Write-Host "The below details can be used to run the assessment, take note of them and press any button to clear the window.`nTenant ID: $tenantID`nClient ID: $($appReg.appID)" -ForegroundColor Green   
+    Write-Host "The following command can be used to run the assessment with delegated permissions:`n.\Perform-ConditionalAccessDetailReport.ps1 -TenantID $tenantID -ClientID $($appReg.appID)"
 }
 Pause
 clear

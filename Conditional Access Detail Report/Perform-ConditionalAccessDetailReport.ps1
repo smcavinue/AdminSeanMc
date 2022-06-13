@@ -32,11 +32,15 @@ Param(
         ParameterSetName = 'Certificate')]
     [Parameter(Mandatory = $true,
         ParameterSetName = 'Secret')]
+    [Parameter(Mandatory = $true,
+        ParameterSetName = 'Delegated')]
     $clientId,
     [parameter(Mandatory = $true,
         ParameterSetName = 'Certificate')]
     [Parameter(Mandatory = $true,
         ParameterSetName = 'Secret')]
+    [Parameter(Mandatory = $true,
+        ParameterSetName = 'Delegated')]
     $tenantId,
     [parameter(Mandatory = $true,
         ParameterSetName = 'Certificate')]
@@ -126,7 +130,6 @@ function ExpandGroup {
         }
         elseif ($Nestedmember.'@odata.type' -eq "#microsoft.graph.group") {
            
-            # $global:grouplist += "$($Nestedmember.displayname) - $($Nestedmember.id)" 
             If ($global:grouplist -contains "$($Nestedmember.displayname) - $($Nestedmember.id)") {
                 write-host "Nested Group loop detected for group $($Nestedmember.displayname) in path $($global:grouplist), consider removing this loop" -ForegroundColor Yellow
             }
@@ -174,7 +177,6 @@ function ExpandExclusionGroup {
         }
         elseif ($Nestedmember.'@odata.type' -eq "#microsoft.graph.group") {
            
-            # $global:grouplist += "$($Nestedmember.displayname) - $($Nestedmember.id)" 
             If ($global:grouplist -contains "$($Nestedmember.displayname) - $($Nestedmember.id)") {
                 write-host "Nested Group loop detected for group $($Nestedmember.displayname) in path $($global:grouplist), consider removing this loop" -ForegroundColor Yellow
             }
@@ -217,7 +219,7 @@ Try {
         $Token = Get-MsalToken -ClientId $ClientId -TenantId $TenantId -ClientSecret ($Secret | ConvertTo-SecureString -AsPlainText -Force) -ForceRefresh
     }
     else {
-        Write-Error "No "
+        $Token = Get-MsalToken -ClientId $ClientId -TenantId $TenantId -RedirectUri "https://localhost" -ForceRefresh 
     }
 }
 Catch {
@@ -356,7 +358,7 @@ if ($ConditionalAccessPoliciesJSON -ne $null) {
         "Conditions.platforms.includePlatforms",
         "Conditions.platforms.excludePlatforms",
         "Conditions.locations.includLocations",
-        "Conditions.locations.excludeLocations"
+        "Conditions.locations.excludeLocations",
         "Conditions.clientAppTypes",
         "Conditions.devices.deviceFilter.mode",
         "Conditions.devices.deviceFilter.rule",
@@ -371,7 +373,47 @@ if ($ConditionalAccessPoliciesJSON -ne $null) {
         "SessionControls.signInFrequency"
 
     )
+    foreach ($Policy in $ConditionalAccessPolicies) {
+        $CAObject = @{
+            "Policy Name"                                                         = $policy.displayName
+            "createdDateTime"                                                     = $Policy.createdDateTime
+            "modifiedDateTime"                                                    = $Policy.modifiedDateTime
+            "state"                                                               = $Policy.state
+            "Conditions.users.includeusers"                                       = $Policy.Conditions.users.includeusers -join ";"
+            "Conditions.users.excludeusers"                                       = $Policy.Conditions.users.excludeusers -join ';'
+            "Conditions.users.includegroups"                                      = $Policy.Conditions.users.includegroups -join ';'
+            "Conditions.users.excludegroups"                                      = $Policy.Conditions.users.excludegroups -join ';'
+            "Conditions.users.includeroles"                                       = $Policy.Conditions.users.includeroles -join ';'
+            "Conditions.users.excluderoles"                                       = $Policy.Conditions.users.excluderoles -join ';'
+            "Conditions.clientApplications.includeServicePrincipals"              = $Policy.Conditions.clientApplications.includeServicePrincipals -join ';'
+            "Conditions.clientApplications.excludeServicePrincipals"              = $Policy.Conditions.clientApplications.excludeServicePrincipals -join ';'
+            "Conditions.applications.includeApplications"                         = $Policy.Conditions.applications.includeApplications -join ';'
+            "Conditions.applications.excludeApplications"                         = $Policy.Conditions.applications.excludeApplications -join ';'
+            "Conditions.applications.includeUserActions"                          = $Policy.Conditions.applications.includeUserActions -join ';'
+            "Conditions.applications.includeAuthenticationContextClassReferences" = $Policy.Conditions.applications.includeAuthenticationContextClassReferences -join ';'
+            "Conditions.userRiskLevels"                                           = $Policy.Conditions.userRiskLevels -join ';'
+            "Conditions.signInRiskLevels"                                         = $Policy.Conditions.signInRiskLevels -join ';'
+            "Conditions.platforms.includePlatforms"                               = $Policy.Conditions.platforms.includePlatforms -join ';'
+            "Conditions.platforms.excludePlatforms"                               = $Policy.Conditions.platforms.excludePlatforms -join ';'
+            "Conditions.locations.includLocations"                                = $Policy.Conditions.locations.includLocations -join ';'
+            "Conditions.locations.excludeLocations"                               = $Policy.Conditions.locations.excludeLocations -join ';'
+            "Conditions.clientAppTypes"                                           = $Policy.Conditions.clientAppTypes -join ';'
+            "Conditions.devices.deviceFilter.mode"                                = $Policy.Conditions.devices.deviceFilter.mode -join ';'
+            "Conditions.devices.deviceFilter.rule"                                = $Policy.Conditions.devices.deviceFilter.rule -join ';'
+            "GrantControls.operator"                                              = $Policy.GrantControls.operator -join ';'
+            "grantcontrols.builtInControls"                                       = $Policy.grantcontrols.builtInControls -join ';'
+            "grantcontrols.customAuthenticationFactors"                           = $Policy.grantcontrols.customAuthenticationFactors -join ';'
+            "grantcontrols.termsOfUse"                                            = $Policy.grantcontrols.termsOfUse -join ';'
+            "SessionControls.disableResilienceDefaults"                           = $Policy.SessionControls.disableResilienceDefaults -join ';'
+            "SessionControls.applicationEnforcedRestrictions"                     = $Policy.SessionControls.applicationEnforcedRestrictions -join ';'
+            "SessionControls.persistentBrowser"                                   = $Policy.SessionControls.persistentBrowser -join ';'
+            "SessionControls.cloudAppSecurity"                                    = $Policy.SessionControls.cloudAppSecurity -join ';'
+            "SessionControls.signInFrequency"                                     = $Policy.SessionControls.signInFrequency -join ';'
 
+        }
+        [array]$CAColumns += [PSCustomObject]$CAObject
+        
+    }
     Foreach ($Heading in $CAHeadings) {
         $Row = $null
         $Row = New-Object psobject -Property @{
@@ -402,7 +444,8 @@ if ($ConditionalAccessPoliciesJSON -ne $null) {
         
 
     }
-    $CAOutput | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Conditional Access" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $CAOutput | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Conditional Access by Column" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $CAColumns | Select "Policy Name", "createdDateTime", "modifiedDateTime", "state", "Conditions.users.includeusers", "Conditions.users.excludeusers", "Conditions.users.includegroups", "Conditions.users.excludegroups", "Conditions.users.includeroles", "Conditions.users.excluderoles", "Conditions.clientApplications.includeServicePrincipals", "Conditions.clientApplications.excludeServicePrincipals", "Conditions.applications.includeApplications", "Conditions.applications.excludeApplications", "Conditions.applications.includeUserActions", "Conditions.applications.includeAuthenticationContextClassReferences", "Conditions.userRiskLevels", "Conditions.signInRiskLevels", "Conditions.platforms.includePlatforms", "Conditions.platforms.excludePlatforms", "Conditions.locations.includLocations", "Conditions.locations.excludeLocations", "Conditions.clientAppTypes", "Conditions.devices.deviceFilter.mode", "Conditions.devices.deviceFilter.rule", "GrantControls.operator", "grantcontrols.builtInControls", "grantcontrols.customAuthenticationFactors", "grantcontrols.termsOfUse", "SessionControls.disableResilienceDefaults", "SessionControls.applicationEnforcedRestrictions", "SessionControls.persistentBrowser", "SessionControls.cloudAppSecurity", "SessionControls.signInFrequency" | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Conditional Access by Row" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
 }
 
 ##Define output variable
