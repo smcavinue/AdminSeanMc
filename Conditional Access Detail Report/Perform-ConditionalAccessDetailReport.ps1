@@ -357,7 +357,7 @@ if ($ConditionalAccessPoliciesJSON -ne $null) {
         "Conditions.signInRiskLevels",
         "Conditions.platforms.includePlatforms",
         "Conditions.platforms.excludePlatforms",
-        "Conditions.locations.includLocations",
+        "Conditions.locations.includeLocations",
         "Conditions.locations.excludeLocations",
         "Conditions.clientAppTypes",
         "Conditions.devices.deviceFilter.mode",
@@ -395,7 +395,7 @@ if ($ConditionalAccessPoliciesJSON -ne $null) {
             "Conditions.signInRiskLevels"                                         = $Policy.Conditions.signInRiskLevels -join ';'
             "Conditions.platforms.includePlatforms"                               = $Policy.Conditions.platforms.includePlatforms -join ';'
             "Conditions.platforms.excludePlatforms"                               = $Policy.Conditions.platforms.excludePlatforms -join ';'
-            "Conditions.locations.includLocations"                                = $Policy.Conditions.locations.includLocations -join ';'
+            "Conditions.locations.includeLocations"                                = $Policy.Conditions.locations.includeLocations -join ';'
             "Conditions.locations.excludeLocations"                               = $Policy.Conditions.locations.excludeLocations -join ';'
             "Conditions.clientAppTypes"                                           = $Policy.Conditions.clientAppTypes -join ';'
             "Conditions.devices.deviceFilter.mode"                                = $Policy.Conditions.devices.deviceFilter.mode -join ';'
@@ -445,7 +445,7 @@ if ($ConditionalAccessPoliciesJSON -ne $null) {
 
     }
     $CAOutput | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Conditional Access by Column" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
-    $CAColumns | Select "Policy Name", "createdDateTime", "modifiedDateTime", "state", "Conditions.users.includeusers", "Conditions.users.excludeusers", "Conditions.users.includegroups", "Conditions.users.excludegroups", "Conditions.users.includeroles", "Conditions.users.excluderoles", "Conditions.clientApplications.includeServicePrincipals", "Conditions.clientApplications.excludeServicePrincipals", "Conditions.applications.includeApplications", "Conditions.applications.excludeApplications", "Conditions.applications.includeUserActions", "Conditions.applications.includeAuthenticationContextClassReferences", "Conditions.userRiskLevels", "Conditions.signInRiskLevels", "Conditions.platforms.includePlatforms", "Conditions.platforms.excludePlatforms", "Conditions.locations.includLocations", "Conditions.locations.excludeLocations", "Conditions.clientAppTypes", "Conditions.devices.deviceFilter.mode", "Conditions.devices.deviceFilter.rule", "GrantControls.operator", "grantcontrols.builtInControls", "grantcontrols.customAuthenticationFactors", "grantcontrols.termsOfUse", "SessionControls.disableResilienceDefaults", "SessionControls.applicationEnforcedRestrictions", "SessionControls.persistentBrowser", "SessionControls.cloudAppSecurity", "SessionControls.signInFrequency" | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Conditional Access by Row" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $CAColumns | Select "Policy Name", "createdDateTime", "modifiedDateTime", "state", "Conditions.users.includeusers", "Conditions.users.excludeusers", "Conditions.users.includegroups", "Conditions.users.excludegroups", "Conditions.users.includeroles", "Conditions.users.excluderoles", "Conditions.clientApplications.includeServicePrincipals", "Conditions.clientApplications.excludeServicePrincipals", "Conditions.applications.includeApplications", "Conditions.applications.excludeApplications", "Conditions.applications.includeUserActions", "Conditions.applications.includeAuthenticationContextClassReferences", "Conditions.userRiskLevels", "Conditions.signInRiskLevels", "Conditions.platforms.includePlatforms", "Conditions.platforms.excludePlatforms", "Conditions.locations.includeLocations", "Conditions.locations.excludeLocations", "Conditions.clientAppTypes", "Conditions.devices.deviceFilter.mode", "Conditions.devices.deviceFilter.rule", "GrantControls.operator", "grantcontrols.builtInControls", "grantcontrols.customAuthenticationFactors", "grantcontrols.termsOfUse", "SessionControls.disableResilienceDefaults", "SessionControls.applicationEnforcedRestrictions", "SessionControls.persistentBrowser", "SessionControls.cloudAppSecurity", "SessionControls.signInFrequency" | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Conditional Access by Row" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
 }
 
 ##Define output variable
