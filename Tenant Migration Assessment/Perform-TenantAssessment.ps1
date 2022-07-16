@@ -76,7 +76,7 @@ function UpdateProgress {
     Write-Progress -Activity "Tenant Assessment in Progress" -Status "Processing Task $ProgressTracker of $($TotalProgressTasks): $ProgressStatus" -PercentComplete (($ProgressTracker / $TotalProgressTasks) * 100)
 }
 $ProgressTracker = 1
-$TotalProgressTasks = 29
+$TotalProgressTasks = 27
 $ProgressStatus = $null
 
 $ProgressStatus = "Importing modules..."
@@ -202,7 +202,6 @@ foreach ($teamgroup in $TeamGroups) {
 
         }
         Catch {
-            write-host "Failed for $apiuri"
             $Sharedchannelsize += 0
         }
     }
@@ -621,25 +620,6 @@ foreach ($domain in $orgdetails.verifieddomains) {
     }
 }
 
-$ProgressStatus = "Getting mailbox permissions..."
-UpdateProgress
-$ProgressTracker++
-
-##Get PF Mailboxes
-
-
-##Get Nested Mailbox Permissions
-
-
-$ProgressStatus = "Getting group membership..."
-UpdateProgress
-$ProgressTracker++
-
-##Get Group Memberships
-
-
-
-
 $ProgressStatus = "Updating references..."
 UpdateProgress
 $ProgressTracker++
@@ -653,7 +633,7 @@ $users | Add-Member -MemberType NoteProperty -Name ArchiveSizeGB -Value "" -Forc
 $users | Add-Member -MemberType NoteProperty -Name Mailboxtype -Value "" -Force
 $users | Add-Member -MemberType NoteProperty -Name ArchiveItemCount -Value "" -Force
 
-foreach ($user in ($users | ? {$_.usertype -ne "Guest"})) {
+foreach ($user in ($users | ? { $_.usertype -ne "Guest" })) {
     ##Set Mailbox Type
     if ($roommailboxes.ExternalDirectoryObjectId -contains $user.id) {
         $user.Mailboxtype = "Room"
@@ -675,7 +655,27 @@ foreach ($user in ($users | ? {$_.usertype -ne "Guest"})) {
         $user.MailboxItemCount = ($MailboxStats | ? { $_.objectID -eq $user.id }).'item count'
     }
 
-    
+    ##Set Shared Mailbox size and count
+    If ($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
+        $user.MailboxSizeGB = (((($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+        $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
+        $user.MailboxItemCount = ($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+    }
+
+    ##Set Equipment Mailbox size and count
+    If ($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
+        $user.MailboxSizeGB = (((($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+        $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
+        $user.MailboxItemCount = ($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+    }
+
+
+    ##Set Room Mailbox size and count
+    If ($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
+        $user.MailboxSizeGB = (((($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+        $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
+        $user.MailboxItemCount = ($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+    }
 
     ##Set archive size and count
     If ($ArchiveStats | ? { $_.objectID -eq $user.id }) {
