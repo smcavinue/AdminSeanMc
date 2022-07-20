@@ -33,7 +33,11 @@ Param(
     [parameter(Mandatory = $true)]
     $tenantId,
     [parameter(Mandatory = $true)]
-    $certificateThumbprint
+    $certificateThumbprint,
+    [parameter(Mandatory = $false)]
+    [switch]$IncludeGroupMembership = $false,
+    [parameter(Mandatory = $false)]
+    [switch]$IncludeMailboxPermissions = $false
 
 )
 
@@ -79,6 +83,14 @@ $ProgressTracker = 1
 $TotalProgressTasks = 27
 $ProgressStatus = $null
 
+if ($IncludeGroupMembership) {
+    $TotalProgressTasks++
+}
+
+if ($IncludeMailboxPermissions) {
+    $TotalProgressTasks++
+}
+
 $ProgressStatus = "Importing modules..."
 UpdateProgress
 $ProgressTracker++
@@ -101,7 +113,7 @@ $ProgressTracker++
 Try {
     $CertificatePath = "cert:\currentuser\my\$CertificateThumbprint"
     $Certificate = Get-Item $certificatePath
-    $Token = Get-MsalToken -ClientId $ClientId -TenantId $TenantId -ClientCertificate $Certificate
+    $Token = Get-MsalToken -ClientId $ClientId -TenantId $TenantId -ClientCertificate $Certificate -ForceRefresh
 }
 Catch {
     write-host "Unable to acquire access token, check the parameters are correct`n$($Error[0])"
@@ -423,7 +435,62 @@ $MailboxStatsReport = ((Invoke-RestMethod -Headers @{Authorization = "Bearer $($
 $apiUri = "https://graph.microsoft.com/v1.0/reports/getOffice365ServicesUserCounts(period='D30')"
 $M365AppsUsage = ((Invoke-RestMethod -Headers @{Authorization = "Bearer $($Token.accesstoken)" } -Uri $apiUri -Method Get) | ConvertFrom-Csv)
 
+##Optional Items - Graph
 
+##Process Group Membership
+If ($IncludeGroupMembership) {
+    $ProgressStatus = "Enumerating Group Membership - This may take some time..."
+    UpdateProgress
+    $GroupMembersObject = @()
+    $i = 1
+    foreach ($group in $groups) {
+        $ProgressStatus = "Enumerating Group Membership - This may take some time... Processing Group $i of $($Groups.count)"
+        UpdateProgress
+        $i++
+        $apiuri = "https://graph.microsoft.com/v1.0/groups/$($group.id)/members"
+        $Members = RunQueryandEnumerateResults
+
+        foreach ($member in $members) {
+
+            $MemberEntry = [PSCustomObject]@{
+                GroupID                 = $group.id
+                GroupName               = $group.displayname
+                MemberID                = $member.id
+                MemberName              = $member.displayname
+                MemberUserPrincipalName = $member.userprincipalname
+                MemberType              = "Member"
+                MemberObjectType = $member.'@odata.type'.replace('#microsoft.graph.','')
+
+            }
+
+            $GroupMembersObject += $memberEntry
+
+        }
+
+        $apiuri = "https://graph.microsoft.com/v1.0/groups/$($group.id)/owners"
+        $Owners = RunQueryandEnumerateResults
+
+        foreach ($member in $Owners) {
+
+            $MemberEntry = [PSCustomObject]@{
+                GroupID                 = $group.id
+                GroupName               = $group.displayname
+                MemberID                = $member.id
+                MemberName              = $member.displayname
+                MemberUserPrincipalName = $member.userprincipalname
+                MemberType              = "Owner"
+                MemberObjectType = $member.'@odata.type'.replace('#microsoft.graph.','')
+
+            }
+
+            $GroupMembersObject += $memberEntry
+
+        }
+    }
+
+
+    $ProgressTracker++
+}
 
 ##Tidy up Proxyaddresses
 foreach ($user in $users) {
@@ -586,6 +653,65 @@ foreach ($Rule in $Rules) {
 
 }
 
+
+#######Optional Items - EXO#######
+
+##Process Mailbox Permissions
+If ($IncludeMailboxPermissions) {
+    $ProgressStatus = "Fetching Mailbox Permissions - This may take some time..."
+    UpdateProgress
+    $PermissionOutput = @()
+    ##Get all mailboxes
+    $MailboxList = Get-EXOMailbox -ResultSize unlimited
+    $PermissionProgress = 1
+    foreach ($mailbox in $MailboxList) {
+        $ProgressStatus = "Fetching Mailbox Permissions for mailbox $PermissionProgress of $($Mailboxlist.count) - This may take some time..."
+        UpdateProgress
+
+        
+
+        [array]$Permissions = Get-EXOMailboxPermission -UserPrincipalName $mailbox.UserPrincipalName | ? { $_.User -ne "NT AUTHORITY\SELF" }
+
+        foreach ($permission in $Permissions) {
+
+            $PermissionObject = [PSCustomObject]@{
+                ExternalDirectoryObjectId = $mailbox.ExternalDirectoryObjectId
+                UserPrincipalName         = $Mailbox.UserPrincipalName
+                Displayname               = $mailbox.DisplayName
+                PrimarySmtpAddress        = $mailbox.PrimarySmtpAddress
+                AccessRight               = $permission.accessRights -join ';'
+                GrantedTo                 = $Permission.user
+
+            }
+            
+            $PermissionOutput += $PermissionObject
+        }
+
+        [array]$RecipientPermissions = Get-EXORecipientPermission $mailbox.UserPrincipalName |  ? { $_.Trustee -ne "NT AUTHORITY\SELF" }
+
+        foreach ($permission in $RecipientPermissions) {
+
+            $PermissionObject = [PSCustomObject]@{
+                ExternalDirectoryObjectId = $mailbox.ExternalDirectoryObjectId
+                UserPrincipalName         = $Mailbox.UserPrincipalName
+                Displayname               = $mailbox.DisplayName
+                PrimarySmtpAddress        = $mailbox.PrimarySmtpAddress
+                AccessRight               = $permission.accessRights -join ';'
+                GrantedTo                 = $Permission.trustee
+
+            }
+            
+            $PermissionOutput += $PermissionObject
+        }
+
+        $PermissionProgress++
+    }
+    $ProgressTracker++
+
+}
+
+#######Report Export#######
+
 $ProgressStatus = "Getting mail connectors..."
 UpdateProgress
 $ProgressTracker++
@@ -694,6 +820,7 @@ foreach ($user in ($users | ? { $_.usertype -ne "Guest" })) {
 
 
 
+
 $ProgressStatus = "Exporting report..."
 UpdateProgress
 $ProgressTracker++
@@ -740,12 +867,17 @@ Try {
     $OutboundConnectors  | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Send Connectors" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export OneDrive Tab
     $OneDrive  | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "OneDrive Sites" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
-
-    
-
+    If ($IncludeMailboxPermissions) {
+        ##Export Mailbox Permissions Tab
+        $PermissionOutput | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Mailbox Permissions" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    }
+    If ($IncludeGroupMembership) {
+        ##Export Group Membership Tab
+        $GroupMembersObject | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Group Membership" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    }
 }
 catch {
-    write-host "Error exporting report, check permissions and make sure the file is not open!"
+    write-host "Error exporting report, check permissions and make sure the file is not open! $_"
     pause
 
 }

@@ -157,7 +157,7 @@ else {
         start-sleep -Seconds 20
         ##Enable Service Principal
         $SP = New-AzureADServicePrincipal -AppID $appReg.AppID
-        ##https://adamtheautomator.com/exchange-online-v2/
+        ##Thanks to: https://adamtheautomator.com/exchange-online-v2/
         ##Add the Global Reader to the app service principal
         $directoryRole = 'Global Reader'
         ## Find the ObjectID of 'Global Reader'
@@ -165,6 +165,19 @@ else {
         ##Provision Global Reader role if it does not exist
         if (!$RoleId) {
             Write-host "Global Reader role not yet provisioned - Provisioning"
+            $template = Get-AzureADDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq $directoryRole }
+            Enable-AzureADDirectoryRole -RoleTemplateId $template.ObjectId
+            $RoleId = (Get-AzureADDirectoryRole | Where-Object { $_.displayname -eq $directoryRole }).ObjectID
+
+        }
+        ## Add the service principal to the Exchange directory role
+        Add-AzureADDirectoryRoleMember -ObjectId $RoleId -RefObjectId $SP.ObjectID -Verbose
+        $directoryRole = 'Exchange Administrator'
+        ## Find the ObjectID of 'Global Reader'
+        $RoleId = (Get-AzureADDirectoryRole | Where-Object { $_.displayname -eq $directoryRole }).ObjectID
+        ##Provision Global Reader role if it does not exist
+        if (!$RoleId) {
+            Write-host "Exchange Administrator role not yet provisioned - Provisioning"
             $template = Get-AzureADDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq $directoryRole }
             Enable-AzureADDirectoryRole -RoleTemplateId $template.ObjectId
             $RoleId = (Get-AzureADDirectoryRole | Where-Object { $_.displayname -eq $directoryRole }).ObjectID
