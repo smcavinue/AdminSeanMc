@@ -459,7 +459,7 @@ If ($IncludeGroupMembership) {
                 MemberName              = $member.displayname
                 MemberUserPrincipalName = $member.userprincipalname
                 MemberType              = "Member"
-                MemberObjectType = $member.'@odata.type'.replace('#microsoft.graph.','')
+                MemberObjectType        = $member.'@odata.type'.replace('#microsoft.graph.', '')
 
             }
 
@@ -479,7 +479,7 @@ If ($IncludeGroupMembership) {
                 MemberName              = $member.displayname
                 MemberUserPrincipalName = $member.userprincipalname
                 MemberType              = "Owner"
-                MemberObjectType = $member.'@odata.type'.replace('#microsoft.graph.','')
+                MemberObjectType        = $member.'@odata.type'.replace('#microsoft.graph.', '')
 
             }
 
@@ -783,24 +783,30 @@ foreach ($user in ($users | ? { $_.usertype -ne "Guest" })) {
 
     ##Set Shared Mailbox size and count
     If ($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
-        $user.MailboxSizeGB = (((($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
-        $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
-        $user.MailboxItemCount = ($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+        if (($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize) {
+            $user.MailboxSizeGB = (((($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+            $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
+            $user.MailboxItemCount = ($SharedMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+        }
     }
 
     ##Set Equipment Mailbox size and count
     If ($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
+        if(($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize){
         $user.MailboxSizeGB = (((($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
         $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
         $user.MailboxItemCount = ($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+        }
     }
 
 
     ##Set Room Mailbox size and count
     If ($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
+        if(($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize){
         $user.MailboxSizeGB = (((($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
         $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
         $user.MailboxItemCount = ($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+        }
     }
 
     ##Set archive size and count
@@ -812,9 +818,11 @@ foreach ($user in ($users | ? { $_.usertype -ne "Guest" })) {
 
     ##Set OneDrive Size and count
     if ($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName }) {
+        if(($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName })){
         $user.OneDriveSizeGB = (((($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName }).'Storage Used (Byte)' / 1024) / 1024) / 1024)
         $user.OneDriveSizeGB = [math]::Round($user.OneDriveSizeGB, 2)
         $user.OneDriveFileCount = ($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName }).'file count'
+        }
     }
 }
 
@@ -850,9 +858,9 @@ Try {
     ##Export M365 Apps Usage
     $M365AppsUsage  | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "M365 Apps Usage" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Unified Groups tab
-    $Groups | ? { ($_.grouptypes -Contains "unified") -and ($_.resourceProvisioningOptions -notcontains "Team") } | select id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Unified Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $Groups | ? { ($_.grouptypes -Contains "unified") -and ($_.resourceProvisioningOptions -notcontains "Team") } | select id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility, membershipRule | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Unified Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Standard Groups tab
-    $Groups | ? { $_.grouptypes -notContains "unified" } | select id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Standard Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $Groups | ? { $_.grouptypes -notContains "unified" } | select id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility, membershipRule | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Standard Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Mail Contacts tab
     $MailContacts | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "MailContacts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export MX Records tab
