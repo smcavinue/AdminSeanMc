@@ -174,6 +174,7 @@ else {
         Add-AzureADDirectoryRoleMember -ObjectId $RoleId -RefObjectId $SP.ObjectID -Verbose
         $directoryRole = 'Exchange Administrator'
         ## Find the ObjectID of 'Global Reader'
+        $RoleId = $null
         $RoleId = (Get-AzureADDirectoryRole | Where-Object { $_.displayname -eq $directoryRole }).ObjectID
         ##Provision Global Reader role if it does not exist
         if (!$RoleId) {
