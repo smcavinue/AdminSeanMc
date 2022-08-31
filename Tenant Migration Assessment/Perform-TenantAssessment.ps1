@@ -792,20 +792,20 @@ foreach ($user in ($users | ? { $_.usertype -ne "Guest" })) {
 
     ##Set Equipment Mailbox size and count
     If ($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
-        if(($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize){
-        $user.MailboxSizeGB = (((($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
-        $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
-        $user.MailboxItemCount = ($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+        if (($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize) {
+            $user.MailboxSizeGB = (((($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+            $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
+            $user.MailboxItemCount = ($EquipmentMailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
         }
     }
 
 
     ##Set Room Mailbox size and count
     If ($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }) {
-        if(($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize){
-        $user.MailboxSizeGB = (((($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
-        $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
-        $user.MailboxItemCount = ($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
+        if (($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize) {
+            $user.MailboxSizeGB = (((($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).mailboxsize.value.tostring().replace(',', '').replace(' ', '').split('b')[0].split('(')[1] / 1024) / 1024) / 1024) 
+            $user.MailboxSizeGB = [math]::Round($user.MailboxSizeGB, 2)
+            $user.MailboxItemCount = ($roommailboxes | ? { $_.ExternalDirectoryObjectId -eq $user.id }).ItemCount
         }
     }
 
@@ -818,10 +818,12 @@ foreach ($user in ($users | ? { $_.usertype -ne "Guest" })) {
 
     ##Set OneDrive Size and count
     if ($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName }) {
-        if(($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName })){
-        $user.OneDriveSizeGB = (((($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName }).'Storage Used (Byte)' / 1024) / 1024) / 1024)
-        $user.OneDriveSizeGB = [math]::Round($user.OneDriveSizeGB, 2)
-        $user.OneDriveFileCount = ($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName }).'file count'
+        if (($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName }).'Storage Used (Byte)') {
+            If ($user.OneDriveSizeGB ) {
+                $user.OneDriveSizeGB = (((($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName }).'Storage Used (Byte)' / 1024) / 1024) / 1024)
+                $user.OneDriveSizeGB = [math]::Round($user.OneDriveSizeGB, 2)
+                $user.OneDriveFileCount = ($OneDrive | ? { $_.'Owner Principal Name' -eq $user.userPrincipalName }).'file count'
+            }
         }
     }
 }
