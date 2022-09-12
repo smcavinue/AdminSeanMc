@@ -3,7 +3,7 @@
     Contact: Sean@seanmcavinue., Twitter: @Sean_McAvinue
     .SYNOPSIS
     Gets guest users last sign in action from AAD logs and exports user and signin list to CSV in C:\temp
-
+ 
 
 #>
 azureadpreview\Connect-azuread
