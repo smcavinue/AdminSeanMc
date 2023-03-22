@@ -115,7 +115,7 @@ function ImportContact {
 Imports contact into specified user mailbox
 
 .DESCRIPTION
-This function accepts an AAD token, user account and contact ovject and imports the contact into the users mailbox
+This function accepts an AAD token, user account and contact object and imports the contact into the users mailbox
 
 .PARAMETER Mailbox
 User Principal Name of target mailbox
