@@ -97,11 +97,7 @@ function GetGraphToken {
     
     #>
 
-    # Application (client) ID, tenant ID and secret
-    #$clientId = "f2d4a5bf-3e5c-4152-aae5-d4fafb45020a"
-    #$tenantId = "1e364211-5bb0-4ca9-81a7-aad85fd2cd08"
-    #$clientSecret = "a2_8Q~S6kRBpviO0H1DD_6lhvw9Mg9GGmP8N6bwm"
-    
+
     
     # Construct URI
     $uri = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
