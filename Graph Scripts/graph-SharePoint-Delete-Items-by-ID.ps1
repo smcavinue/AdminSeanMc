@@ -11,9 +11,9 @@ function GetGraphToken {
     #>
 
     # Application (client) ID, tenant ID and secret
-    $clientId = "3b04d58f-9abe-4917-a129-033125d573ab"
-    $tenantId = "845ee061-0700-412a-90f5-1465fb9a39f1"
-    $clientSecret = "PdDf~OXb609K.s7v.l_thRS5~mhcKY7vam"
+    $clientId = ""
+    $tenantId = ""
+    $clientSecret = ""
     
     
     # Construct URI
