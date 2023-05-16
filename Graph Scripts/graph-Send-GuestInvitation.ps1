@@ -5,7 +5,6 @@ function GetGraphToken {
     .SYNOPSIS
     This function gets and returns a Graph Token using the provided details
     
-
     .PARAMETER clientSecret
     -is the app registration client secret
 
