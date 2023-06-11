@@ -38,7 +38,7 @@ If ($StorageContainerName) {
    
     Get-AzStorageBlobContent -Blob $CSVFilePath -Container $StorageContainerName -Context $context
    
-    $csv = import-csv plantemplate.csv
+    $csv = import-csv $csvFilePath
 
 }
 else {
