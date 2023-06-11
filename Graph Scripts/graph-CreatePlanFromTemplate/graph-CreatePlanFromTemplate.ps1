@@ -26,7 +26,9 @@ param(
     $StorageContainerName
 )
 
-
+##Example for running locally:
+##.\graph-CreatePlanFromTemplate.ps1 -clientID $clientID -tenantID $tenantID -clientSecret $clientSecret -csvfilepath $csvfilepath -PlanName "Tenant to Tenant Migration Plan" -GroupID $groupID
+##StorageAccountName and StorageContainerName are optional parameters for running from Azure Automation
 If ($StorageContainerName) {
 
     write-host "Storage Container Parameter detected, downloading CSV from storage account"
