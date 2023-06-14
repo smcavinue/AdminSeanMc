@@ -23,7 +23,10 @@ param(
     $StorageAccountName,
     [parameter(Mandatory = $false)]
     [String]
-    $StorageContainerName
+    $StorageContainerName,
+    [parameter(Mandatory = $false)]
+    [String]
+    $TeamsChannelName
 )
 
 ##Example for running locally:
@@ -108,7 +111,6 @@ foreach ($bucket in $Buckets) {
     $CreatedBucket = New-MgPlannerBucket -BodyParameter $params
     $BucketList += $CreatedBucket
     $orderhint = " $($createdBucket.orderhint)!"
-    write-host $orderhint
 
 }
 
@@ -148,8 +150,27 @@ foreach ($Task in $csv) {
         write-error "Could not update task details: $($task.task), Error:`n $_"
         exit
     }
-
 }
 
-
-
+##Add Planner to Teams Channel 
+if ($TeamsChannelName) {
+    Try {
+        $ChannelID = (Get-MgTeamChannel -TeamId $groupid | ?{$_.DisplayName -eq $TeamsChannelName}).id
+        $params = @{
+            name                  = $PlanName
+            displayName           = $PlanName
+            "teamsapp@odata.bind" = "https://graph.microsoft.com/v1.0/appCatalogs/teamsApps/com.microsoft.teamspace.tab.planner"
+            configuration         = @{
+                contentUrl = "https://tasks.teams.microsoft.com/teamsui/{tid}/Home/PlannerFrame?page=7&auth_pvr=OrgId&auth_upn={userPrincipalName}&groupId={groupId}&planId=$($plan.id)&channelId={channelId}&entityId={entityId}&tid={tid}&userObjectId={userObjectId}&subEntityId={subEntityId}&sessionId={sessionId}&theme={theme}&mkt={locale}&ringId={ringId}&PlannerRouteHint={tid}"
+                removeUrl = "https://tasks.teams.microsoft.com/teamsui/{tid}/Home/PlannerFrame?page=13&auth_pvr=OrgId&auth_upn={userPrincipalName}&groupId={groupId}&planId=$($plan.id)&channelId={channelId}&entityId={entityId}&tid={tid}&userObjectId={userObjectId}&subEntityId={subEntityId}&sessionId={sessionId}&theme={theme}&mkt={locale}&ringId={ringId}&PlannerRouteHint={tid}"
+                websiteUrl = "https://tasks.office.com/{tid}/Home/PlanViews/$($Plan.id)?Type=PlanLink&Channel=TeamsTab"        
+            }
+        
+        }    
+        $CreatedTab = New-MgTeamChannelTab -TeamId $groupid -ChannelId $ChannelID -BodyParameter $params
+    }
+    catch {
+        write-error "Could not create tab for task: $($task.task), Error:`n $_"
+        exit
+    }
+}
