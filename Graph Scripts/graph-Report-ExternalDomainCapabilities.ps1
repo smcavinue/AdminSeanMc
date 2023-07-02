@@ -469,7 +469,7 @@ foreach ($domain in $domainSettingsObjectArray) {
         $domain.teamsfederation = "Org Default"
     }
     if (!$domain.GuestInvitations) {
-        $domain.GuestInvitationss = "Org Default"
+        $domain.GuestInvitations = "Org Default"
     }
     if (!$domain.SharePointSharing) {
         $domain.SharePointSharing = "Org Default"
