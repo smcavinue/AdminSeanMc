@@ -403,7 +403,7 @@ foreach ($CrossTenantPartnerPolicy in $CrossTenantPartnerPolicies) {
         $TrustedSettings += "Compliant Devices`n"
     }
 
-    if ($CrossTenantPartnerPolicy.inboundtrust.IsDomainJoinedDeviceAccepted) {
+    if ($CrossTenantPartnerPolicy.inboundtrust.IsMfaAccepted) {
         $TrustedSettings += "Domain Joined Devices`n"
     }
 
