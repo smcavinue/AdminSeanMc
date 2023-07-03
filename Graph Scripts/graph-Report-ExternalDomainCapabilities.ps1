@@ -404,7 +404,7 @@ foreach ($CrossTenantPartnerPolicy in $CrossTenantPartnerPolicies) {
     }
 
     if ($CrossTenantPartnerPolicy.inboundtrust.IsMfaAccepted) {
-        $TrustedSettings += "Domain Joined Devices`n"
+        $TrustedSettings += "MFA`n"
     }
 
     if ($crosstenantpartnerPolicy.InboundTrust.IsIntuneManagedDeviceAccepted) {
