@@ -132,9 +132,9 @@ if($SPOSettings.sharingCapability -eq "Disabled"){
         $domainSettingsObjectArray += $domainSettingsObject
     }
 }elseif(($SPOSettings.sharingCapability -ne "Disabled") -and ($SPOSettings.sharingDomainRestrictionMode -eq "none")){
-    $domainSettingsObjectArray | ? { $_.domain -eq "Default" } | % { $_.SharePointSharing = "Allowed"}s 
+    $domainSettingsObjectArray | ? { $_.domain -eq "Default" } | % { $_.SharePointSharing = "Allowed"}
 }
-
+ 
 ##Get external domains from TeamsFederationConfiguration
 $TeamsFederationSettings = Get-CsTenantFederationConfiguration
 
