@@ -1,4 +1,5 @@
 <##Author: Sean McAvinue
+##Changes by: Olaf Kehling, ask:us GmbH (minor changes)
 ##Details: Graph / PowerShell Script to assess a Microsoft 365 tenant for migration of Exchange, Teams, SharePoint and OneDrive, 
 ##          Please fully read and test any scripts before running in your production environment!
         .SYNOPSIS
@@ -152,7 +153,7 @@ UpdateProgress
 $ProgressTracker++
 
 ##List All Tenant Users
-$apiuri = "https://graph.microsoft.com/v1.0/users?`$select=id,userprincipalname,mail,displayname,givenname,surname,licenseAssignmentStates,proxyaddresses,usagelocation,usertype,accountenabled"
+$apiuri = "https://graph.microsoft.com/v1.0/users?`$select=id,userprincipalname,mail,displayname,givenname,surname,licenseAssignmentStates,proxyaddresses,usagelocation,usertype,accountenabled,onPremisesSyncEnabled,onPremisesUserPrincipalName,onPremisesSamAccountName"
 $users = RunQueryandEnumerateResults
 
 $ProgressStatus = "Getting groups..."
@@ -160,7 +161,7 @@ UpdateProgress
 $ProgressTracker++
 
 ##List all Tenant Groups
-$apiuri = "https://graph.microsoft.com/v1.0/groups"
+$apiuri = "https://graph.microsoft.com/v1.0/groups?`$select=id,displayName,mail,description,createdDateTime,mailEnabled,securityEnabled,mailNickname,proxyAddresses,visibility,membershipRule,onPremisesSyncEnabled,onPremisesUserPrincipalName,onPremisesSamAccountName,groupTypes,resourceProvisioningOptions"
 $Groups = RunQueryandEnumerateResults
 
 $ProgressStatus = "Getting Teams..."
@@ -842,27 +843,28 @@ Try {
     }
     ##Export Data File##
     ##Export User Accounts tab
-    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "User") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, OneDriveSizeGB, OneDriveFileCount, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "User Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "User") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, OneDriveSizeGB, OneDriveFileCount, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype, onPremisesSyncEnabled, onPremisesUserPrincipalName, onPremisesSamAccountName | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "User Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    # $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "User") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, OneDriveSizeGB, OneDriveFileCount, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "User Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export Shared Mailboxes tab
-    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "shared") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Shared Mailboxes" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    $users | ? { ($_.usertype -ne "Guest") -and ($_.mailboxtype -eq "shared") } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype, onPremisesSyncEnabled, onPremisesUserPrincipalName, onPremisesSamAccountName | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Shared Mailboxes" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export Resource Accounts tab
-    $users | ? { ($_.usertype -ne "Guest") -and (($_.mailboxtype -eq "Room") -or ($_.mailboxtype -eq "Equipment")) } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Resource Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    $users | ? { ($_.usertype -ne "Guest") -and (($_.mailboxtype -eq "Room") -or ($_.mailboxtype -eq "Equipment")) } | Select-Object Migrate, id, accountenabled, userPrincipalName, mail, targetobjectID, targetUPN, TargetMail, displayName, MailboxItemCount, MailboxSizeGB, MailboxType, ArchiveSizeGB, ArchiveItemCount, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usagelocation, usertype, onPremisesSyncEnabled, onPremisesUserPrincipalName, onPremisesSamAccountName | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Resource Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export SharePoint Tab
-    $SharePoint | ? { ($_.teamid -eq $null) -and ($_.'Root Web Template' -ne "Team Channel") } | select 'Site ID', 'Site URL', 'Owner Display Name', 'Is Deleted', 'Last Activity Date', 'File Count', 'Active File Count', 'Page View Count', 'Storage Used (Byte)', 'Root Web Template', 'Owner Principal Name' | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "SharePoint Sites" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $SharePoint | ? { ($_.teamid -eq $null) -and ($_.'Root Web Template' -ne "Team Channel") } | select 'Migrate', 'Site ID', 'Site URL', 'Owner Display Name', 'Is Deleted', 'Last Activity Date', 'File Count', 'Active File Count', 'Page View Count', 'Storage Used (Byte)', 'Root Web Template', 'Owner Principal Name' | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "SharePoint Sites" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Teams Tab
-    $TeamGroups | select id, displayname, standardchannels, privatechannels, SharedChannels, Datasize, PrivateChannelsSize, SharedChannelsSize, IncomingSharedChannels, mail, URL, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Teams"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $TeamGroups | select Migrate, id, displayname, standardchannels, privatechannels, SharedChannels, Datasize, PrivateChannelsSize, SharedChannelsSize, IncomingSharedChannels, mail, URL, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Teams"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Guest Accounts tab
-    $users | ? { $_.usertype -eq "Guest" } | Select-Object id, accountenabled, userPrincipalName, mail, displayName, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Guest Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
+    $users | ? { $_.usertype -eq "Guest" } | Select-Object Migrate,id, accountenabled, userPrincipalName, mail, displayName, givenName, surname, proxyaddresses, 'License SKUs', 'Group License Assignments', 'Disabled Plan IDs', usertype | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Guest Accounts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow 
     ##Export AAD Apps Tab
-    $AADApps | ? { $_.publishername -notlike "Microsoft*" } | select createddatetime, displayname, publisherName, signinaudience | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "AAD Apps" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $AADApps | ? { $_.publishername -notlike "Microsoft*" } | select Migrate, createddatetime, displayname, publisherName, signinaudience | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "AAD Apps" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Conditional Access Tab
     $CAOutput   | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Conditional Access" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export M365 Apps Usage
     $M365AppsUsage  | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "M365 Apps Usage" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Unified Groups tab
-    $Groups | ? { ($_.grouptypes -Contains "unified") -and ($_.resourceProvisioningOptions -notcontains "Team") } | select id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility, membershipRule | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Unified Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $Groups | ? { ($_.grouptypes -Contains "unified") -and ($_.resourceProvisioningOptions -notcontains "Team") } | select Migrate,id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility, membershipRule, onPremisesSyncEnabled, onPremisesUserPrincipalName, onPremisesSamAccountName | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Unified Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Standard Groups tab
-    $Groups | ? { $_.grouptypes -notContains "unified" } | select id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility, membershipRule | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Standard Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
+    $Groups | ? { $_.grouptypes -notContains "unified" } | select Migrate,id, displayname, mail, description, createdDateTime, mailEnabled, securityenabled, mailNickname, proxyAddresses, visibility, membershipRule, onPremisesSyncEnabled, onPremisesUserPrincipalName, onPremisesSamAccountName | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "Standard Groups"  -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export Mail Contacts tab
     $MailContacts | Export-Excel -Path ("$FilePath\$Filename") -WorksheetName "MailContacts" -AutoSize -AutoFilter -FreezeTopRow -BoldTopRow
     ##Export MX Records tab
