@@ -1,11 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # 
-# Sample Script to Push Data to M365 Compliance Connector 
+# Sample Script to Push Data to M365 Compliance Connector using Certificate Authentication - Updated from the Microsoft Sample script: https://github.com/microsoft/m365-compliance-connector-sample-scripts/blob/main/sample_script.ps1
+# More information on https://seanmcavinue.net/2023/07/10/deploying-the-microsoft-purview-hr-data-connector-with-certificate-authentication/
 # Examples
 #
 # Push data to M365 Compliance Connector:
-# .\sample_script.ps1 -tenantId <Guid> -appId <App Id> -appSecret <App Secret> -jobId <Job id GUID> -filePath <File Path> -Verbose
+# .\DataConnectorSync.ps1 -tenantId <Guid> -appId <App Id> -certThumbprint <Certificate Thumbprint> -jobId <Job id GUID> -filePath <File Path> -Verbose
 <#
     .SYNOPSIS
         Sample Script to push Data to M365 Compliance Connector. Script Takes an Input file, chunks it to predefined size and does the data push
@@ -23,7 +24,7 @@
         This is the Azure AD application Id for the app that you created in Azure AD. 
         This is used by Azure AD for authentication when the script attempts to accesses your Microsoft 365 organization.
     .PARAMETER CERTTHUMBPRINT
-        This is the Azure AD application secret for the app that you created in Azure AD. This also used for authentication.
+        This is the thumbprint of the certificate stored in "cert:\currentuser\My\". This is used for authentication.
     .PARAMETER JOBID
         The JobId retreived while setting up the Connector
     .PARAMETER FilePath
@@ -66,10 +67,10 @@ class FileMetdata {
 }
 
 function Get-AccessToken () {
+    ##Thank you to Adam the Automator for his blog post on this topic https://adamtheautomator.com/powershell-graph-api/ 
     ##Get authentication token using Certificate
     $Certificate = Get-Item "cert:\currentuser\My\$certThumbprint"
     
-
     # Create base64 hash of certificate
     $CertificateBase64Hash = [System.Convert]::ToBase64String($Certificate.GetCertHash())
 
