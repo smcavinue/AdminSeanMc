@@ -1,6 +1,6 @@
 ##Connect to MG Graph and Teams
 Connect-MgGraph -Scopes "IdentityProvider.Read.All policy.read.all CrossTenantInformation.ReadBasic.All SharePointTenantSettings.Read.All"
-Select-MgProfile beta
+
 Connect-MicrosoftTeams
 
 ##Create output object array
@@ -202,7 +202,7 @@ foreach ($domain in $domainSettingsObjectArray) {
 
 
 ##Get Cross Tenant Policy Defaults
-$DefaultCrossTenantPolicy = Get-MgPolicyCrossTenantAccessPolicyDefault
+$DefaultCrossTenantPolicy = Get-MgBetaPolicyCrossTenantAccessPolicyDefault
 
 ##Process B2B Collaboration Inbound
 $B2BAppsPolicy = $DefaultCrossTenantPolicy.B2BCollaborationInbound.Applications.AccessType
@@ -288,7 +288,7 @@ $domainSettingsObjectArray | ? { $_.domain -eq "Default" } | % { $_.TrustSetting
 $domainSettingsObjectArray | ? { $_.domain -eq "Default" } | % { $_.AutomaticRedemption = "N/A" }
 
 ##Get Cross Tenant Policies for Partner Domains
-[array]$CrossTenantPartnerPolicies = Get-MgPolicyCrossTenantAccessPolicyPartner
+[array]$CrossTenantPartnerPolicies = Get-MgBetaPolicyCrossTenantAccessPolicyPartner
 
 ##Process Partner Domains
 foreach ($CrossTenantPartnerPolicy in $CrossTenantPartnerPolicies) {
@@ -386,7 +386,7 @@ foreach ($CrossTenantPartnerPolicy in $CrossTenantPartnerPolicies) {
     ##Process Cross tenant sync inbound
     
     Try {
-        if((Get-MgPolicyCrossTenantAccessPolicyPartnerIdentitySynchronization -CrossTenantAccessPolicyConfigurationPartnerTenantId $CrossTenantPartnerPolicy.TenantId -erroraction silentlycontinue).UserSyncInbound.issyncallowed){
+        if((Get-MgBetaPolicyCrossTenantAccessPolicyPartnerIdentitySynchronization -CrossTenantAccessPolicyConfigurationPartnerTenantId $CrossTenantPartnerPolicy.TenantId -erroraction silentlycontinue).UserSyncInbound.issyncallowed){
             $SyncEnabled = "Enabled"
         }else{
             $SyncEnabled = "Disabled"
