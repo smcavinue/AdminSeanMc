@@ -21,13 +21,8 @@ $sender = "sean.mcavinue@seanmcavinue.net"
 $recipient = "sean.mcavinue@seanmcavinue.net"
 $subject = "Daily Risk Report"
 
-##Connect to Azure to retrieve an access token
-Connect-AzAccount -Identity
-$Token = (Get-AzAccessToken -ResourceURL "https://graph.microsoft.com").token
-
-
 ##Connect to Microsoft Graph
-Connect-MgGraph -AccessToken (ConvertTo-SecureString $Token -AsPlainText -Force)
+Connect-MgGraph -Identity -NoWelcome
 
 [array]$RiskDetections = Get-MgRiskDetection -All -filter "riskstate eq 'atRisk'"
 [array]$RiskyUsers = Get-MgRiskyUser -All -filter "riskstate eq 'atRisk'"
