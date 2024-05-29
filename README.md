@@ -50,7 +50,7 @@ to a local folder
 ### Perform the Assessment
 5. run the script Perform-TenantAssessment.ps1 (does the magic)
    <br>
----> for example: .\Perform-TenantAssessment.ps1 -ClientID 38c24985-933a-46dc-90e6-5db54c777ef2 -TenantID 3548c4da-03e2-4e68-abbc-fcd68945d257 -CertificateThumbPrint F7D9B03E7DE24090D49B4CB974D74561CF375F9
+---> for example: .\Perform-TenantAssessment.ps1 -ClientID 38c24985-933a-46dc-90e6-5db54c7asdasd -TenantID 3548c4da-03e2-4e68-abbc-fcd689asdasd -CertificateThumbPrint F7D9B03E7DE24090D49B111114D74561CF375F9
 7. open the Excel File created under C:\Temp
 8. Have fun analyzing
 
