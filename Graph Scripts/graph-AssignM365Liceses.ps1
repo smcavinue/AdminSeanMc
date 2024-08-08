@@ -4,8 +4,6 @@
 # Resources: https://seanmcavinue.net
 # Example: Assign-M365Licenses.ps1
 
-#Requires -modules microsoft.graph
-
 Try {
     Connect-MgGraph -scopes "Directory.Read.All Organization.Read.All"
 }
