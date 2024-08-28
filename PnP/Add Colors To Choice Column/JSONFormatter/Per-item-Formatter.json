@@ -1,0 +1,11 @@
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "{TAGPLACEHOLDER}"
+                            ]
+                        },
+                        "{ColorPlaceholder}",
+                        {
