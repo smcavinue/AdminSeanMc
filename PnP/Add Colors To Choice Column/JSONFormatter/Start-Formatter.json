@@ -1,0 +1,24 @@
+{
+    "elmType": "div",
+    "style": {
+        "flex-wrap": "wrap",
+        "display": "flex"
+    },
+    "children": [
+        {
+            "forEach": "__INTERNAL__ in @currentField",
+            "elmType": "div",
+            "style": {
+                "box-sizing": "border-box",
+                "padding": "4px 8px 5px 8px",
+                "overflow": "hidden",
+                "text-overflow": "ellipsis",
+                "display": "flex",
+                "border-radius": "16px",
+                "height": "24px",
+                "align-items": "center",
+                "white-space": "nowrap",
+                "margin": "4px 4px 4px 4px"
+            },
+            "attributes": {
+                "class": {

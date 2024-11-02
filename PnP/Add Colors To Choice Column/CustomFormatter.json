@@ -1,0 +1,1317 @@
+{
+    "elmType": "div",
+    "style": {
+        "flex-wrap": "wrap",
+        "display": "flex"
+    },
+    "children": [
+        {
+            "forEach": "__INTERNAL__ in @currentField",
+            "elmType": "div",
+            "style": {
+                "box-sizing": "border-box",
+                "padding": "4px 8px 5px 8px",
+                "overflow": "hidden",
+                "text-overflow": "ellipsis",
+                "display": "flex",
+                "border-radius": "16px",
+                "height": "24px",
+                "align-items": "center",
+                "white-space": "nowrap",
+                "margin": "4px 4px 4px 4px"
+            },
+            "attributes": {
+                "class": {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 2"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLilac sp-css-borderColor-LilacFont sp-css-color-LilacFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 3"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkRed sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 4"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgRed sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 5"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgOrange sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 6"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgBrown sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 7"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 8"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgTeal sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 9"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 10"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgBlue sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 11"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLavender sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 12"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkBlue sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 13"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 14"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 15"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 16"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkPink sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 17"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 18"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgCoral sp-css-borderColor-CoralFont sp-css-color-CoralFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 19"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDustRose sp-css-borderColor-DustRoseFont sp-css-color-DustRoseFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 20"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgPeach sp-css-borderColor-PeachFont sp-css-color-PeachFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 21"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgGold sp-css-borderColor-GoldFont sp-css-color-GoldFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 22"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgMintGreen sp-css-borderColor-MintGreenFont sp-css-color-MintGreenFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 23"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgCyan sp-css-borderColor-CyanFont sp-css-color-CyanFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 24"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgSage sp-css-borderColor-SageFont sp-css-color-SageFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 25"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgCornflowerBlue sp-css-borderColor-CornflowerBlueFont sp-css-color-CornflowerBlueFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 26"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLightPurple sp-css-borderColor-LightPurpleFont sp-css-color-LightPurpleFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 27"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLightBlue sp-css-borderColor-LightBlueFont sp-css-color-LightBlueFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 28"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgViolet sp-css-borderColor-VioletFont sp-css-color-VioletFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 29"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgMauve sp-css-borderColor-MauveFont sp-css-color-MauveFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 30"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLilac sp-css-borderColor-LilacFont sp-css-color-LilacFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 31"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLightGray sp-css-borderColor-LightGrayFont sp-css-color-LightGrayFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 32"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkRed sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 33"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgRed sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 34"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgOrange sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 35"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgBrown sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 36"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 37"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgTeal sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 38"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 39"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgBlue sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 40"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLavender sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 41"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkBlue sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 42"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 43"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 44"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkPink sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 45"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgGray sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 46"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgCoral sp-css-borderColor-CoralFont sp-css-color-CoralFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 47"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDustRose sp-css-borderColor-DustRoseFont sp-css-color-DustRoseFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 48"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgPeach sp-css-borderColor-PeachFont sp-css-color-PeachFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 49"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgGold sp-css-borderColor-GoldFont sp-css-color-GoldFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 50"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgMintGreen sp-css-borderColor-MintGreenFont sp-css-color-MintGreenFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 51"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgCyan sp-css-borderColor-CyanFont sp-css-color-CyanFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 52"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgSage sp-css-borderColor-SageFont sp-css-color-SageFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 53"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgCornflowerBlue sp-css-borderColor-CornflowerBlueFont sp-css-color-CornflowerBlueFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 54"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLightPurple sp-css-borderColor-LightPurpleFont sp-css-color-LightPurpleFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 55"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLightBlue sp-css-borderColor-LightBlueFont sp-css-color-LightBlueFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 56"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgViolet sp-css-borderColor-VioletFont sp-css-color-VioletFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 57"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgMauve sp-css-borderColor-MauveFont sp-css-color-MauveFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 58"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLilac sp-css-borderColor-LilacFont sp-css-color-LilacFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 59"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLilac sp-css-borderColor-LilacFont sp-css-color-LilacFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 60"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkRed sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 61"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgRed sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 62"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgOrange sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 63"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgBrown sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 64"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 65"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgTeal sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 66"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 67"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgBlue sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 68"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLavender sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 69"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkBlue sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 70"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 71"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 72"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 73"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkPink sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 74"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 75"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgCoral sp-css-borderColor-CoralFont sp-css-color-CoralFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 76"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDustRose sp-css-borderColor-DustRoseFont sp-css-color-DustRoseFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 77"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgPeach sp-css-borderColor-PeachFont sp-css-color-PeachFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 78"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgGold sp-css-borderColor-GoldFont sp-css-color-GoldFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 79"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgMintGreen sp-css-borderColor-MintGreenFont sp-css-color-MintGreenFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 80"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgCyan sp-css-borderColor-CyanFont sp-css-color-CyanFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 81"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgSage sp-css-borderColor-SageFont sp-css-color-SageFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 82"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgCornflowerBlue sp-css-borderColor-CornflowerBlueFont sp-css-color-CornflowerBlueFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 83"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLightPurple sp-css-borderColor-LightPurpleFont sp-css-color-LightPurpleFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 84"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLightBlue sp-css-borderColor-LightBlueFont sp-css-color-LightBlueFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 85"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgViolet sp-css-borderColor-VioletFont sp-css-color-VioletFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 86"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgMauve sp-css-borderColor-MauveFont sp-css-color-MauveFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 87"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLilac sp-css-borderColor-LilacFont sp-css-color-LilacFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 88"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLightGray sp-css-borderColor-LightGrayFont sp-css-color-LightGrayFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 89"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkRed sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 90"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgRed sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 91"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgOrange sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 92"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgBrown sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 93"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 94"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgTeal sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 95"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkGreen sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 96"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgBlue sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 97"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgLavender sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 98"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkBlue sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 99"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgDarkPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+                        {
+ "operator": ":",
+                    "operands": [
+                        {
+                            "operator": "==",
+                            "operands": [
+                                "[$__INTERNAL__]",
+                                "Choice 100"
+                            ]
+                        },
+                        "sp-css-backgroundColor-BgPurple sp-css-borderColor-WhiteFont sp-css-color-WhiteFont",
+"sp-field-borderAllRegular sp-field-borderAllSolid sp-css-borderColor-neutralSecondary"
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+},
+            "txtContent": "[$__INTERNAL__]"
+        }
+    ],
+    "templateId": "BgColorChoicePill"
+}
