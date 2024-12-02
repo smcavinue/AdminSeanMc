@@ -165,7 +165,8 @@ Access Token
         "profession": "$($contact.profession)",
         "personalNotes": "$($contact.personalNotes)",
         "surname": "$($contact.surname)",
-        "title": "$($contact.title)"
+        "title": "$($contact.title)",
+        "fileAs": "$($contact.surname), $($contact.givenName)"
     }
 "@
 
