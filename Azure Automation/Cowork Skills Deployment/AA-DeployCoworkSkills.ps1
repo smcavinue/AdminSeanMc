@@ -60,7 +60,7 @@ Function CopyFileToOneDrive {
 
 }
 
-Connect-mggraph #-Identity
+Connect-mggraph -Identity
 
 $CoworkSite = get-mgsite -SiteId "$tenantname.sharepoint.com:/sites/$SiteName" 
 
