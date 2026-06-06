@@ -34,16 +34,16 @@ Function CopyFileToOneDrive {
 
     
     Try{
-    $TargetCoworkFolder = get-mgdriveitem -DriveId $TargetOneDrive.Id -DriveItemId "root:/Documents/Cowork2" -erroraction stop
+    $TargetCoworkFolder = get-mgdriveitem -DriveId $TargetOneDrive.Id -DriveItemId "root:/Documents/Cowork" -erroraction stop
     }catch{
         $DocumentsFolder = Get-MgDriveItem -DriveId $TargetOneDrive.Id -DriveItemId "root:/Documents"
         Write-Host "Creating Cowork folder in $($TargetUserName)'s OneDrive"
-        $TargetCoworkFolder = New-MgDriveItemChild -DriveId $TargetOneDrive.Id -Name "Cowork2" -Folder @{ childCount = 0 } -DriveItemId  $DocumentsFolder.Id
+        $TargetCoworkFolder = New-MgDriveItemChild -DriveId $TargetOneDrive.Id -Name "Cowork" -Folder @{ childCount = 0 } -DriveItemId  $DocumentsFolder.Id
         $TargetSkillsFolder = New-MgDriveItemChild -DriveId $TargetOneDrive.Id -Name "Skills" -Folder @{ childCount = 0 } -DriveItemId  $TargetCoworkFolder.Id
     }
 
     Try{
-    $TargetSkillsFolder = get-mgdriveitem -DriveId $TargetOneDrive.Id -DriveItemId "root:/Documents/Cowork2/Skills" -erroraction stop
+    $TargetSkillsFolder = get-mgdriveitem -DriveId $TargetOneDrive.Id -DriveItemId "root:/Documents/Cowork/Skills" -erroraction stop
     }catch{
         $TargetSkillsFolder = New-MgDriveItemChild -DriveId $TargetOneDrive.Id -Name "Skills" -Folder @{ childCount = 0 } -DriveItemId  $TargetCoworkFolder.Id
     }
