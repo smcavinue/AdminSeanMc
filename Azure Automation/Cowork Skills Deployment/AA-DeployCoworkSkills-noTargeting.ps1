@@ -22,12 +22,12 @@ Function CopyFileToOneDrive {
 
 
     If( (Get-MgDriveItem -DriveId $TargetOneDrive.Id -DriveItemId $TargetSkill -ErrorAction SilentlyContinue) -ne $null) {
-        write-host "Skill already exists in target location ($TargetSkill), skipping deployment"
+        write-output "Skill already exists in target location ($TargetSkill), skipping deployment"
         If(-not $OverwriteExisting) {
             return
         }
         else {
-            write-host "Overwriting existing skill in target location ($TargetSkill)"
+            write-output "Overwriting existing skill in target location ($TargetSkill)"
             Remove-MgDriveItem -DriveId $TargetOneDrive.Id -DriveItemId $TargetSkill
         }
     }
@@ -37,7 +37,7 @@ Function CopyFileToOneDrive {
     $TargetCoworkFolder = get-mgdriveitem -DriveId $TargetOneDrive.Id -DriveItemId "root:/Documents/Cowork" -erroraction stop
     }catch{
         $DocumentsFolder = Get-MgDriveItem -DriveId $TargetOneDrive.Id -DriveItemId "root:/Documents"
-        Write-Host "Creating Cowork folder in $($TargetUserName)'s OneDrive"
+        write-output "Creating Cowork folder in $($TargetUserName)'s OneDrive"
         $TargetCoworkFolder = New-MgDriveItemChild -DriveId $TargetOneDrive.Id -Name "Cowork" -Folder @{ childCount = 0 } -DriveItemId  $DocumentsFolder.Id
         $TargetSkillsFolder = New-MgDriveItemChild -DriveId $TargetOneDrive.Id -Name "Skills" -Folder @{ childCount = 0 } -DriveItemId  $TargetCoworkFolder.Id
     }
@@ -82,16 +82,16 @@ foreach ($Deployment in $Deployments) {
     $file = Invoke-MgGraphRequest -method Get -Uri "https://graph.microsoft.com/v1.0/sites/$($Coworksite.Id)/lists/$($List.Id)/items/$($deployment.id)/driveitem"
     $sourceFilePath = $file.parentReference.path.Replace("/sites/$SiteName/drive/root:", "") + "/" + $file.name
     
-        write-host "Deploying to EEEU Group"
+        write-output "Deploying to EEEU Group"
         # Get list of all users in tenant who have licenses
         foreach($licensedUser in $LicensedUsers) {
             Try{
                 Get-MgUserDefaultDrive -UserId $licensedUser.UserPrincipalName -ErrorAction Stop | Out-Null
-                write-host "Deploying to User: $($licensedUser.UserPrincipalName) via Everyone except external users group"
+                write-output "Deploying to User: $($licensedUser.UserPrincipalName) via Everyone except external users group"
                 CopyFileToOneDrive -TenantName $TenantName -SiteName $SiteName -SourceDriveId $Documents.Id -TargetUserName $licensedUser.UserPrincipalName -SourceFileId $file.id -overwriteExisting:$OverwriteExisting
 
             }catch{
-                write-host "User $($licensedUser.UserPrincipalName) does not have a OneDrive, skipping deployment"
+                write-output "User $($licensedUser.UserPrincipalName) does not have a OneDrive, skipping deployment"
             }
         }
 }
