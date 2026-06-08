@@ -17,8 +17,8 @@ Function CopyFileToOneDrive {
     $SourceFile = Get-MgDriveItem -DriveId $SourceDriveId -DriveItemId $SourceFileId
 
     $TargetOneDrive = Get-MgUserDefaultDrive -UserId $TargetUserName 
-    $TargetFilePath = "root:/Documents/Cowork2/Skills"
-    $TargetSkill = "root:/Documents/Cowork2/Skills/$($SourceFile.Name)"
+    $TargetFilePath = "root:/Documents/Cowork/Skills"
+    $TargetSkill = "root:/Documents/Cowork/Skills/$($SourceFile.Name)"
 
 
     If( (Get-MgDriveItem -DriveId $TargetOneDrive.Id -DriveItemId $TargetSkill -ErrorAction SilentlyContinue) -ne $null) {
